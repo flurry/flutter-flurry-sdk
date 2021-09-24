@@ -1,0 +1,37 @@
+group 'com.flurry.android.flutter'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+}
+
+dependencies {
+    // implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+    implementation 'com.flurry.android:analytics:13.0.0'
+    implementation 'com.flurry.android:marketing:13.0.0'
+}

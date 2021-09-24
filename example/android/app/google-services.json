@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "775057971123",
+    "project_id": "flurry-flutter",
+    "storage_bucket": "flurry-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:775057971123:android:528d089ced2dad92e99dc6",
+        "android_client_info": {
+          "package_name": "com.example.flutter_flurry_sdk_example"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "775057971123-5smqjro5u0lpcnt9p5kid1e49fvg97u7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3YkRlf0E2raPSbMqFilwUQWZWI5yN-VY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "775057971123-5smqjro5u0lpcnt9p5kid1e49fvg97u7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
