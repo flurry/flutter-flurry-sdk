@@ -77,12 +77,6 @@ class Flurry {
     return 7;
   }
 
-  static void setServerUrl() {
-    if (flurryAgent != null) {
-      flurryAgent.setServerUrl();
-    }
-  }
-
   /// Sends ccpa compliance data to Flurry.
   ///
   /// Opts out or opt in to data sale to third parties based boolean value of

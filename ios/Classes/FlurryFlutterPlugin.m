@@ -216,8 +216,6 @@ bool hasSetUpDummyListener_messaging = false;
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"getPlatformVersion" isEqualToString:call.method]) {
       result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-  } else if([@"setServerUrl" isEqualToString:call.method]) {
-      [self flurrySetServerUrl];
   } else if([@"initializeFlurryBuilder" isEqualToString:call.method]) {
       [self initializeFlurrySessionBuilder];
   } else if([@"withCrashReporting" isEqualToString:call.method]) {
@@ -344,14 +342,6 @@ bool hasSetUpDummyListener_messaging = false;
   }else{
       result(FlutterMethodNotImplemented);
   }
-}
-
--(void) flurrySetServerUrl {
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-    [Flurry performSelector:@selector(setServerURL:) withObject:@"http://192.168.1.66:8082/flr.do"];
-#pragma clang diagnostic pop
 }
 
 -(void) initializeFlurrySessionBuilder {

@@ -54,7 +54,6 @@ class _MyHomePageState extends State<MyHomePage> with MessagingListener, Publish
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      Flurry.setServerUrl();
       Flurry.builder.withLogEnabled(true)
           .withLogLevel(LogLevel.verbose)
           .withCrashReporting(true)

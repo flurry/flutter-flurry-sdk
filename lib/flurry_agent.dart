@@ -188,12 +188,6 @@ class FlurryAgent {
     }
   }
 
-  void setServerUrl() {
-    if (Platform.isIOS) {
-      _agentChannel.invokeMethod('setServerUrl');
-    }
-  }
-
   void setDataSaleOptOut(bool isOptOut) {
     _agentChannel.invokeMethod('setDataSaleOptOut', <String, dynamic> {
       'isOptOut': isOptOut
