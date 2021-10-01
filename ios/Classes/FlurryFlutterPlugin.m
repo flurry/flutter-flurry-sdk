@@ -16,6 +16,9 @@
 #import "FConfig.h"
 #endif
 
+NSString *originName = @"flutter-flurry-sdk";
+NSString *originVersion = @"1.0.0";
+
 static FlurryFlutterPlugin* sharedInstance;
 
 NSString *kNotificationReceivedMessage = @"NotificationReceived";
@@ -358,6 +361,7 @@ bool hasSetUpDummyListener_messaging = false;
 -(void) flurryStartSessionWithSessionBuilder:(NSDictionary* )session {
     NSString* apiKey = session[@"apiKey"];
     if(![Flurry activeSessionExists]) {
+        [Flurry addOrigin:originName withVersion:originVersion];
         [Flurry startSession:apiKey withSessionBuilder:builder];
     }
 }
