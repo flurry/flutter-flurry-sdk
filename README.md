@@ -54,8 +54,7 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
   ```groovy
   dependencies {
       // Recommended to add Google Play Services
-      implementation 'com.google.android.gms:play-services-base:15.0.1'
-      implementation 'com.google.android.gms:play-services-ads:15.0.1'
+      implementation 'com.google.android.gms:play-services-ads-identifier:17.1.0'
   }
   ```
 
@@ -102,7 +101,7 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
         apply plugin: 'com.google.gms.google-services'
 
         dependencies {
-            implementation 'com.google.firebase:firebase-messaging:20.1.0'
+            implementation 'com.google.firebase:firebase-messaging:21.1.0'
         }
      ```
 
