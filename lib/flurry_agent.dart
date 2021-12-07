@@ -8,6 +8,57 @@ class FlurryAgent {
 
   static const MethodChannel _agentChannel = const MethodChannel('flurry_flutter_plugin');
 
+  void setContinueSessionMillis(int sessionMillis) {
+    if (Platform.isIOS) {
+      int seconds = sessionMillis ~/ 1000;
+      String secondsStr = seconds.toString();
+      _agentChannel.invokeMethod('setContinueSessionMillis', <String, dynamic>{
+        'secondsStr': secondsStr
+      });
+    } else if (Platform.isAndroid) {
+      String sessionMillisStr = sessionMillis.toString();
+      _agentChannel.invokeMethod('setContinueSessionMillis', <String, dynamic>{
+        'sessionMillisStr': sessionMillisStr
+      });
+    }
+  }
+
+  void setCrashReporting(bool crashReporting) {
+    _agentChannel.invokeMethod('setCrashReporting', <String, dynamic>{
+      'crashReporting': crashReporting
+    });
+  }
+
+  void setIncludeBackgroundSessionsInMetrics(bool includeBackgroundSessionsInMetrics) {
+    _agentChannel.invokeMethod('setIncludeBackgroundSessionsInMetrics', <String, dynamic> {
+      'includeBackgroundSessionsInMetrics': includeBackgroundSessionsInMetrics
+    });
+  }
+
+  void setLogEnabled(bool enableLog) {
+    _agentChannel.invokeMethod('setLogEnabled', <String, dynamic> {
+      'enableLog': enableLog
+    });
+  }
+
+  void setLogLevel(LogLevel logLevel) {
+    int logLevelInt = Flurry().getLogLevel(logLevel);
+    String logLevelStr = logLevelInt.toString();
+    _agentChannel.invokeMethod('setLogLevel', <String, dynamic> {
+      'logLevelStr': logLevelStr
+    });
+  }
+
+  void setSslPinningEnabled(bool sslPinningEnabled) {
+    if (Platform.isIOS) {
+      print("Flurry iOS SDK does not implement setSslPinningEnabled method");
+    } else {
+      _agentChannel.invokeMethod('setSslPinningEnabled', <String, dynamic>{
+        'sslPinningEnabled': sslPinningEnabled
+      });
+    }
+  }
+
   void addOrigin(String originName, String originVersion) {
     _agentChannel.invokeMethod('addOrigin', <String, dynamic> {
       'originName': originName,
@@ -224,13 +275,9 @@ class FlurryAgent {
   }
 
   void setVersionName(String versionName) {
-    if (Platform.isIOS) {
-      print("Android only. For iOS, please also call Flurry.builder.WithAppVersion().");
-    } else {
-      _agentChannel.invokeMethod('setVersionName', <String, dynamic>{
-        'versionName': versionName
-      });
-    }
+    _agentChannel.invokeMethod('setVersionName', <String, dynamic>{
+      'versionName': versionName
+    });
   }
 
   void updateConversionValue(int conversionValue) {
@@ -361,10 +408,20 @@ class BuilderAgent {
 
   void withPerformanceMetrics(int performanceMetrics) {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implement WithPerformanceMetrics method");
+      print("Flurry iOS SDK does not implement withPerformanceMetrics method");
     } else {
       _agentBuilderChannel.invokeMethod('withPerformanceMetrics', <String, dynamic>{
         'performanceMetrics': performanceMetrics
+      });
+    }
+  }
+
+  void withSslPinningEnabled(bool sslPinningEnabled) {
+    if (Platform.isIOS) {
+      print("Flurry iOS SDK does not implement withSslPinningEnabled method");
+    } else {
+      _agentBuilderChannel.invokeMethod('withSslPinningEnabled', <String, dynamic>{
+        'sslPinningEnabled': sslPinningEnabled
       });
     }
   }
@@ -501,8 +558,10 @@ class MessagingAgent{
               }
             } else if (Platform.isAndroid) {
               if (listener != null) {
-                // user specify value not supported yet.
                 bool willHandle = listener.onNotificationReceived(convertToMessage(event));
+                _messagingChannel.invokeMethod('willHandleMessage', <String, dynamic> {
+                  'willHandle': willHandle
+                });
               }
             }
             break;
@@ -514,8 +573,10 @@ class MessagingAgent{
               }
             } else if (Platform.isAndroid) {
               if (listener != null) {
-                // user specify value not supported yet.
                 bool willHandle = listener.onNotificationClicked(convertToMessage(event));
+                _messagingChannel.invokeMethod('willHandleMessage', <String, dynamic> {
+                  'willHandle': willHandle
+                });
               }
             }
             break;

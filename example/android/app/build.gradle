@@ -53,8 +53,8 @@ flutter {
 dependencies {
     // implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
-    implementation 'com.flurry.android:analytics:13.0.0'
-    implementation 'com.flurry.android:marketing:13.0.0'
+    implementation 'com.flurry.android:analytics:13.1.0'
+    implementation 'com.flurry.android:marketing:13.1.0'
 
     implementation 'com.google.android.gms:play-services-ads-identifier:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'

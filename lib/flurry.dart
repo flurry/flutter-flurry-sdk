@@ -77,6 +77,59 @@ class Flurry {
     return 7;
   }
 
+  /// Sets the timeout for expiring a Flurry session.
+  ///
+  /// Sets the time the app may be in the background before starting a new session
+  /// upon resume. Default is set to 10 seconds in background.
+  static void setContinueSessionMillis([int sessionMillis = 10000]) {
+    if (flurryAgent != null) {
+      flurryAgent.setContinueSessionMillis(sessionMillis);
+    }
+  }
+
+  /// Enable automatics collection of crash reports.
+  ///
+  /// Catches uncaught exceptions and reports them to Flurry if [crashReporting]
+  /// enabled. Default value is set to true.
+  static void setCrashReporting([bool crashReporting = true]) {
+    if (flurryAgent != null) {
+      flurryAgent.setCrashReporting(crashReporting);
+    }
+  }
+
+  /// Enables opting out of background sessions being counted towards total
+  /// sessions.
+  ///
+  /// Set [includeBackgroundSessionsInMetrics] true if this session should be
+  /// added to total sessions/DAUs when application state is inactive or background.
+  /// This API needs to be called before starting session.
+  static void setIncludeBackgroundSessionsInMetrics([bool includeBackgroundSessionsInMetrics = true]) {
+    if (flurryAgent != null) {
+      flurryAgent.setIncludeBackgroundSessionsInMetrics(includeBackgroundSessionsInMetrics);
+    }
+  }
+
+  /// Generates debug logs to console.
+  static void setLogEnabled([bool enableLog = true]) {
+    if (flurryAgent != null) {
+      flurryAgent.setLogEnabled(enableLog);
+    }
+  }
+
+  /// Sets the log level of the debug logs of console.
+  static void setLogLevel([LogLevel logLevel = LogLevel.warn]) {
+    if (flurryAgent != null) {
+      flurryAgent.setLogLevel(logLevel);
+    }
+  }
+
+  /// True to enable or false to disable SSL Pinning for Flurry Analytics connection. Defaults to false.
+  static void setSslPinningEnabled([bool sslPinningEnabled = false]) {
+    if (flurryAgent != null) {
+      flurryAgent.setSslPinningEnabled(sslPinningEnabled);
+    }
+  }
+
   /// Sends ccpa compliance data to Flurry.
   ///
   /// Opts out or opt in to data sale to third parties based boolean value of
@@ -447,7 +500,6 @@ class Builder {
     return this;
   }
 
-
   /// Enable automatics collection of crash reports.
   ///
   /// Catches uncaught exceptions and reports them to Flurry if [crashReporting]
@@ -503,6 +555,14 @@ class Builder {
   Builder withPerformanceMetrics([int performanceMetrics = Performance.all]) {
     if (builderAgent != null) {
       builderAgent.withPerformanceMetrics(performanceMetrics);
+    }
+    return this;
+  }
+
+  /// True to enable or false to disable SSL Pinning for Flurry Analytics connection. Defaults to false.
+  Builder withSslPinningEnabled([bool sslPinningEnabled = false]) {
+    if (builderAgent != null) {
+      builderAgent.withSslPinningEnabled(sslPinningEnabled);
     }
     return this;
   }

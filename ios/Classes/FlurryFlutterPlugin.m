@@ -17,7 +17,7 @@
 #endif
 
 NSString *originName = @"flutter-flurry-sdk";
-NSString *originVersion = @"1.0.0";
+NSString *originVersion = @"1.1.0";
 
 static FlurryFlutterPlugin* sharedInstance;
 
@@ -237,6 +237,12 @@ bool hasSetUpDummyListener_messaging = false;
       [self flurryWithLogEnabled:call.arguments];
   } else if([@"withLogLevel" isEqualToString:call.method]) {
       [self flurryWithLogLevel:call.arguments];
+  } else if([@"setVersionName" isEqualToString:call.method]) {
+    [self flurrySetVersionName:call.arguments];
+  } else if([@"setContinueSessionMillis" isEqualToString:call.method]) {
+      [self flurrySetContinueSessionMillis:call.arguments];
+  } else if([@"setIncludeBackgroundSessionsInMetrics" isEqualToString:call.method]) {
+      [self flurrySetIncludeBackgroundSessionsInMetrics:call.arguments];
   } else if([@"addUserPropertyValue" isEqualToString:call.method]) {
       [self flurryAddUserPropertyValue:call.arguments];
   } else if([@"addUserPropertyValues" isEqualToString:call.method]) {
@@ -283,7 +289,7 @@ bool hasSetUpDummyListener_messaging = false;
       NSNumber* logEvent = [NSNumber numberWithLong:[self flurryLogEventWithParameters:call.arguments]];
       result(logEvent);
   } else if([@"logPayment" isEqualToString:call.method]) {
-      NSNumber* num = [NSNumber numberWithLong:[self flurryLogPayement:call.arguments]];
+      NSNumber* num = [NSNumber numberWithLong:[self flurryLogPayment:call.arguments]];
       result(num);
   } else if([@"logTimedEvent" isEqualToString:call.method]) {
     [self flurryLogTimedEvent:call.arguments];
@@ -409,6 +415,22 @@ bool hasSetUpDummyListener_messaging = false;
             [builder withLogLevel: FlurryLogLevelCriticalOnly]; //default
         }
     }
+}
+
+-(void) flurrySetVersionName:(NSDictionary *)appVersionDict {
+    NSString* appVersion = appVersionDict[@"versionName"];
+    [Flurry setAppVersion:appVersion];
+}
+
+-(void) flurrySetContinueSessionMillis:(NSDictionary *)seconds {
+    NSString* secondsStr = seconds[@"secondsStr"];
+    NSInteger secondsInt = [secondsStr integerValue];
+    [Flurry setSessionContinueSeconds:secondsInt];
+}
+
+-(void) flurrySetIncludeBackgroundSessionsInMetrics:(NSDictionary*)includeBackgroundSessionsInMetrics {
+    BOOL isIncludeBackgroundSessionsInMetrics = includeBackgroundSessionsInMetrics[@"includeBackgroundSessionsInMetrics"];
+    [Flurry setCountBackgroundSessions:isIncludeBackgroundSessionsInMetrics];
 }
 
 -(void) flurryAddUserPropertyValue:(NSDictionary *)userProperties {
@@ -538,20 +560,19 @@ bool hasSetUpDummyListener_messaging = false;
     return [Flurry logEvent:eventId withParameters:params];
 }
 
--(NSInteger) flurryLogPayement:(NSDictionary*)payment {
+-(NSInteger) flurryLogPayment:(NSDictionary*)payment {
     NSString* productName = payment[@"productName"];
     NSString* productId = payment[@"productId"];
     NSUInteger quantity = [payment[@"quantity"] unsignedIntegerValue];
-    NSNumber* price = [NSNumber numberWithDouble:[payment[@"price"] doubleValue]];
-    NSDecimalNumber* priceDecNum = [NSDecimalNumber decimalNumberWithDecimal:[price decimalValue]];
+    double price = [payment[@"price"] doubleValue];
     NSString* currency = payment[@"currency"];
     NSString* transactionId = payment[@"transactionId"];
     NSString* keysStr = payment[@"keysStr"];
     NSString* valuesStr = payment[@"valuesStr"];
     NSMutableDictionary* params = [self keyValueToDict:keysStr values:valuesStr];
     __block NSInteger transactionStatus = 0;
-    [Flurry logFlurryPaymentTransactionParamsWithTransactionId:transactionId productId:productId
-    quantity:&quantity price:priceDecNum currency:currency productName:productName
+    [Flurry logPaymentTransactionWithTransactionId:transactionId productId:productId
+    quantity:quantity price:price currency:currency productName:productName
     transactionState:FlurryPaymentTransactionStatePurchasing userDefinedParams:params statusCallback:^(FlurryTransactionRecordStatus status) {
         transactionStatus = (NSInteger)status;
     }];

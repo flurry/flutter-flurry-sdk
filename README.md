@@ -142,7 +142,7 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
    Flurry.builder
        .withCrashReporting(true)
        .withLogEnabled(true)
-       .withLogLevel(LogLevel.verbose)
+       .withLogLevel(LogLevel.debug)
        .build(androidAPIKey: FLURRY_ANDROID_API_KEY,
                   iosAPIKey: FLURRY_IOS_API_KEY);
    ```
@@ -162,6 +162,10 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
    String sessionId = await Flurry.getSessionId();
    print("Session Id: $sessionId");
    
+   // Set Flurry preferences.
+   Flurry.setLogEnabled(true);
+   Flurry.setLogLevel(LogLevel.verbose);
+    
    // Set user preferences.
    Flurry.setAge(36);
    Flurry.setGender(Gender.female);
@@ -296,17 +300,29 @@ See [Android](http://flurry.github.io/flurry-android-sdk/)-[(FlurryAgent)](http:
 - **Methods in Flurry.builder to initialize Flurry Agent**
 
   ```dart
-  Builder withAppVersion(String versionName);
+  Builder withAppVersion(String versionName);  // iOS only. For Android, please use Flurry.setVersionName() instead.
   Builder withContinueSessionMillis(int sessionMillis);
   Builder withCrashReporting(bool crashReporting);
   Builder withDataSaleOptOut(bool isOptOut);
   Builder withIncludeBackgroundSessionsInMetrics(bool includeBackgroundSessionsInMetrics);
   Builder withLogEnabled(bool enableLog);
-  Builder withLogLevel(LogLevel logLevel);
+  Builder withLogLevel(LogLevel logLevel); // LogLevel = { verbose, debug, info, warn, error, assertion }
   Builder withMessaging(bool enableMessaging, MessagingListener listener);
-  Builder withPerformanceMetrics(int performanceMetrics);
+  Builder withPerformanceMetrics(int performanceMetrics); // Performance = { none, coldStart, screenTime, all }
+  Builder withSslPinningEnabled(bool sslPinningEnabled); // Android only
 
   void build(String androidAPIKey, String iosAPIKey);
+  ```
+
+- **Methods to set Flurry preferences**
+
+  ```javascript
+  void Flurry.setContinueSessionMillis(int sessionMillis);
+  void Flurry.setCrashReporting(bool crashReporting);
+  void Flurry.setIncludeBackgroundSessionsInMetrics(bool includeBackgroundSessionsInMetrics);
+  void Flurry.setLogEnabled(bool enableLog);
+  void Flurry.setLogLevel(LogLevel logLevel); // LogLevel = { verbose, debug, info, warn, error, assertion }
+  void Flurry.setSslPinningEnabled(bool sslPinningEnabled); // Android only
   ```
 
 - **Methods to set user preferences**

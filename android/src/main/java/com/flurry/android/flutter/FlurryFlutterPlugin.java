@@ -18,6 +18,7 @@ package com.flurry.android.flutter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
@@ -55,7 +56,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static final String TAG = "FlurryFlutterPlugin";
 
     private static final String ORIGIN_NAME = "flutter-flurry-sdk";
-    private static final String ORIGIN_VERSION = "1.0.0";
+    private static final String ORIGIN_VERSION = "1.1.0";
 
     private Context context;
 
@@ -191,11 +192,41 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 withLogLevel(logLevelStr);
                 break;
             case "withPerformanceMetrics":
-                int performanceMetrics = call.<Integer>argument("perfomanceMetrics");
+                int performanceMetrics = call.<Integer>argument("performanceMetrics");
                 withPerformanceMetrics(performanceMetrics);
+                break;
+            case "withSslPinningEnabled":
+                boolean sslPinningEnabled = call.<Boolean>argument("sslPinningEnabled");
+                builder.withSslPinningEnabled(sslPinningEnabled);
                 break;
             case "withMessaging":
                 withMessaging();
+                break;
+            case "setContinueSessionMillis":
+                sessionMillisStr = call.argument("sessionMillisStr");
+                long millis = Long.parseLong(sessionMillisStr);
+                FlurryAgent.setContinueSessionMillis(millis);
+                break;
+            case "setCrashReporting":
+                crashReporting = call.<Boolean>argument("crashReporting");
+                FlurryAgent.setCaptureUncaughtExceptions(crashReporting);
+                break;
+            case "setIncludeBackgroundSessionsInMetrics":
+                includeBackgroundSessionsInMetrics = call.<Boolean>argument("includeBackgroundSessionsInMetrics");
+                FlurryAgent.setIncludeBackgroundSessionsInMetrics(includeBackgroundSessionsInMetrics);
+                break;
+            case "setLogEnabled":
+                enableLog = call.<Boolean>argument("enableLog");
+                FlurryAgent.setLogEnabled(enableLog);
+                break;
+            case "setLogLevel":
+                logLevelStr = call.argument("logLevelStr");
+                int logLevel = Integer.parseInt(logLevelStr);
+                FlurryAgent.setLogLevel(logLevel);
+                break;
+            case "setSslPinningEnabled":
+                sslPinningEnabled = call.<Boolean>argument("sslPinningEnabled");
+                FlurryAgent.setSslPinningEnabled(sslPinningEnabled);
                 break;
             case "addUserPropertyValue":
                 String propertyName = call.argument("propertyName");
@@ -408,6 +439,10 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             case "setMessagingListener":
                 // no-op
                 break;
+            case "willHandleMessage":
+                boolean willHandle = call.<Boolean>argument("willHandle");
+                FlutterFlurryMessagingListener.notifyCallbackReturn(willHandle);
+                break;
             case "isPublisherDataFetched":
                 boolean fetched = FlurryPublisherSegmentation.isFetchFinished();
                 result.success(fetched);
@@ -616,21 +651,25 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     }
 
     public int logEvent(String eventId) {
-        return FlurryAgent.logEvent(eventId).ordinal();
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId);
+        return (status != null) ? status.ordinal() : 0;
     }
 
     public int logEventWithParameters(String eventId, String keysStr, String valuesStr) {
         Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
-        return FlurryAgent.logEvent(eventId, parameters).ordinal();
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, parameters);
+        return (status != null) ? status.ordinal() : 0;
     }
 
     public int logTimedEvent(String eventId, boolean timed) {
-        return FlurryAgent.logEvent(eventId, timed).ordinal();
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, timed);
+        return (status != null) ? status.ordinal() : 0;
     }
 
     public int logTimedEventWithParameters(String eventId, String keysStr, String valuesStr, boolean timed) {
         Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
-        return FlurryAgent.logEvent(eventId, parameters, timed).ordinal();
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, parameters, timed);
+        return (status != null) ? status.ordinal() : 0;
     }
 
     public void endTimedEvent(String eventId) {
@@ -665,7 +704,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             paramMap.put(entry.getKey(), entry.getValue());
         }
 
-        return FlurryAgent.logEvent(event, params).ordinal();
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(event, params);
+        return (status != null) ? status.ordinal() : 0;
     }
 
     public void onError(String errorId, String message, String errorClass) {
@@ -684,8 +724,9 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     public int logPayment(String productName, String productId, int quantity, double price,
                                 String currency, String transactionId, String keysStr, String valuesStr) {
         Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
-        return FlurryAgent.logPayment(productName, productId, quantity, price, currency,
-                transactionId, parameters).ordinal();
+        FlurryEventRecordStatus status = FlurryAgent.logPayment(productName, productId, quantity, price, currency,
+                transactionId, parameters);
+        return (status != null) ? status.ordinal() : 0;
     }
 
     public List<String> stringToList(String listStr) {
@@ -821,7 +862,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
 
             FlurryMarketingOptions messagingOptions = new FlurryMarketingOptions.Builder()
                     .setupMessagingWithAutoIntegration()
-                    .withFlurryMessagingListener(messagingListener)
+                    .withFlurryMessagingListener(messagingListener, getHandler())
                     // Define yours if needed
                     // .withDefaultNotificationChannelId(NOTIFICATION_CHANNEL_ID)
                     // .withDefaultNotificationIconResourceId(R.mipmap.ic_launcher_round)
@@ -854,8 +895,9 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 } else {
                     builder.setupMessagingWithManualIntegration(messagingOptions.getToken());
                 }
+
                 messagingOptions = builder
-                        .withFlurryMessagingListener(new FlutterFlurryMessagingListener())
+                        .withFlurryMessagingListener(new FlutterFlurryMessagingListener(), getHandler())
                         .withDefaultNotificationChannelId(messagingOptions.getNotificationChannelId())
                         .withDefaultNotificationIconResourceId(messagingOptions.getDefaultNotificationIconResourceId())
                         .withDefaultNotificationIconAccentColor(messagingOptions.getDefaultNotificationIconAccentColor())
@@ -866,6 +908,15 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             mFlurryAgentBuilder.withModule(marketingModule);
 
             return this;
+        }
+
+        private Handler getHandler() {
+            // Use non-UI thread to notify the messaging listeners.
+            HandlerThread handlerThread = new HandlerThread("FlurryHandlerThread");
+            handlerThread.start();
+            Handler handler = new Handler(handlerThread.getLooper());
+
+            return handler;
         }
 
         public void build(final Context context, final String apiKey) {
@@ -960,6 +1011,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
      */
     static class FlutterFlurryMessagingListener implements FlurryMessagingListener {
         private static EventChannel.EventSink eventSink;
+        private static boolean sCallbackReturnValue = false;
+        private static boolean sIsCallbackReturn = false;
         private static String sToken = null;
 
         enum EventType {
@@ -1031,6 +1084,9 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             params.put("clickAction", flurryMessage.getClickAction());
             params.put("appData", flurryMessage.getAppData());
 
+            sCallbackReturnValue = false;
+            sIsCallbackReturn = !waitReturn;
+
             // Run Flutter event channel on the UI main thread.
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -1039,8 +1095,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 }
             });
 
-            // user specify value not supported yet.
-            return false;
+            waitCallbackReturn();
+            return sCallbackReturnValue;
         }
 
         private static void sendEvent(EventType type, String token) {
@@ -1055,6 +1111,26 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                     eventSink.success(params);
                 }
             });
+        }
+
+        private static void waitCallbackReturn() {
+            synchronized (eventSink) {
+                if (!sIsCallbackReturn) {
+                    try {
+                        eventSink.wait(300);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "Interrupted Exception!", e);
+                    }
+                }
+            }
+        }
+
+        public static void notifyCallbackReturn(boolean returnValue) {
+            synchronized (eventSink) {
+                sCallbackReturnValue = returnValue;
+                sIsCallbackReturn = true;
+                eventSink.notifyAll();
+            }
         }
 
     }

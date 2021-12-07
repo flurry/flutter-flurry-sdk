@@ -41,7 +41,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with MessagingListener, PublisherSegmentationListener{
+class _MyHomePageState extends State<MyHomePage> with MessagingListener, PublisherSegmentationListener {
   String _platformVersion = 'Unknown';
 
   @override
@@ -60,8 +60,17 @@ class _MyHomePageState extends State<MyHomePage> with MessagingListener, Publish
           .withAppVersion("1.0.0")
           .withIncludeBackgroundSessionsInMetrics(true)
           .withMessaging(true, this)
+          .withSslPinningEnabled(true)
+          .withPerformanceMetrics(Performance.all)
           .build(androidAPIKey: 'C9R699NJWSMJVPQWJ273',
                  iosAPIKey: 'RPBHT5CJFFJ9WCS3C5R6');
+
+      Flurry.setContinueSessionMillis(10000);
+      Flurry.setCrashReporting(true);
+      Flurry.setIncludeBackgroundSessionsInMetrics(true);
+      Flurry.setLogEnabled(true);
+      Flurry.setLogLevel(LogLevel.verbose);
+      Flurry.setSslPinningEnabled(true);
 
       // ios test config use - RPBHT5CJFFJ9WCS3C5R6
       // ios use default - VSWDMD4N49ZZ8ZNWWVCB
