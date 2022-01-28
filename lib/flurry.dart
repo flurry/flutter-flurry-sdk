@@ -1,3 +1,17 @@
+// Copyright 2022, Yahoo Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import 'dart:async';
 import 'dart:core';
 import 'dart:io';
@@ -134,7 +148,7 @@ class Flurry {
   ///
   /// Opts out or opt in to data sale to third parties based boolean value of
   /// [isOptOut].
-  /// The user's preference must be used to initialize the [WithDataSaleOptOut]
+  /// The user's preference must be used to initialize the [Builder.withDataSaleOptOut]
   /// setting in the [Builder] in all future sessions.
   static void setDataSaleOptOut(bool isOptOut) {
     if (flurryAgent != null) {
@@ -196,7 +210,7 @@ class Flurry {
   /// Sets the [versionName] of the app.
   ///
   /// Use this method to set [versionName] and for iOS, set version name with
-  /// [WithAppVersion].
+  /// [Builder.withAppVersion].
   static void setVersionName(String versionName) {
     if (flurryAgent != null) {
       flurryAgent.setVersionName(versionName);
@@ -1445,7 +1459,7 @@ enum StandardParam {
 /// There will be recommended standardized parameter keys and mandatory
 /// standardized parameter keys defined for each standard event name.
 ///
-/// For instance, to log [PURCHASED] event, SDK suggests to include
+/// For instance, to log [FlurryEvent.purchased] event, SDK suggests to include
 /// itemCount, totalAmount, itemId, success, itemName, itemType, currencyType
 /// and transactionId parameters, in which totalAmount is also a mandatory
 /// parameter that is indicated by the SDK. Since each type of standardized
@@ -1602,7 +1616,7 @@ abstract class ParamBase {
 /// [StringParam] is the class of Flurry-defined param keys which can be only
 /// mapped with string value.
 ///
-/// It is a subclass of [Parambase].
+/// It is a subclass of [ParamBase].
 class StringParam extends ParamBase {
   StringParam(StandardParam paramId) {
     id = paramId;
@@ -1612,7 +1626,7 @@ class StringParam extends ParamBase {
 /// [IntegerParam] is the class of Flurry-defined param keys which can be only
 /// mapped with integer value.
 ///
-/// It is a subclass of [Parambase].
+/// It is a subclass of [ParamBase].
 class IntegerParam with ParamBase {
   IntegerParam(StandardParam paramId) {
     id = paramId;
@@ -1622,7 +1636,7 @@ class IntegerParam with ParamBase {
 /// [DoubleParam] is the class of Flurry-defined param keys which can be only
 /// mapped with double value.
 ///
-/// It is a subclass of [Parambase].
+/// It is a subclass of [ParamBase].
 class DoubleParam extends ParamBase {
   DoubleParam(StandardParam paramId) {
     id = paramId;
@@ -1632,7 +1646,7 @@ class DoubleParam extends ParamBase {
 /// [BooleanParam] is the class of Flurry-defined param keys which can be only
 /// mapped with boolean value.
 ///
-/// It is a subclass of [Parambase].
+/// It is a subclass of [ParamBase].
 class BooleanParam extends ParamBase {
   BooleanParam(StandardParam paramId) {
     id = paramId;

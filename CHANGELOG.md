@@ -3,6 +3,16 @@
 * [Flurry Android SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/android/)
 * [Flurry iOS SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/ios/)
 
+## v1.2.0 (2022-02-02)
+
+#### Features
+
+* Provide example for sample instead of testing
+
+#### Bug Fixes
+
+* Fix dartdoc links, typo
+
 ## v1.1.0 (2021-12-06)
 
 #### Features

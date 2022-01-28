@@ -40,10 +40,10 @@ A Flutter plugin for Flurry SDK
 4. run ``` flutter pub get``` in the terminal from the directory containing pubspec.yaml file or click "Packages get" in 
 Intellij or Android Studio.
 
-5. Flutter Flurry SDK has been added as a dependency. Now, import the Flurry.dart class in the
+5. Flutter Flurry SDK has been added as a dependency. Now, import the flurry.dart class in the
 files calling Flurry SDK APIs.
 ```dart
-import 'package:flutter_flurry_sdk/Flurry.dart';
+import 'package:flutter_flurry_sdk/flurry.dart';
 ```
 
 ### Android
@@ -132,8 +132,7 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
    import 'package:flutter/material.dart';
    import 'dart:async';
    
-   import 'package:flutter/services.dart';
-   import 'package:flutter_flurry_sdk/Flurry.dart';
+   import 'package:flutter_flurry_sdk/flurry.dart';
    
    // Init Flurry once as early as possible recommended in main.dart.
    // For each platform (Android, iOS) where the app runs you need to acquire a unique Flurry API Key.
@@ -150,7 +149,7 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
 - `lib/example.dart`
 
    ```dart
-   import 'package:flutter_flurry_sdk/Flurry.dart';
+   import 'package:flutter_flurry_sdk/flurry.dart';
    
    // Example to get Flurry versions.
    int agentVersion = await Flurry.getAgentVersion();
@@ -294,8 +293,8 @@ import 'package:flutter_flurry_sdk/Flurry.dart';
 
 ## API Reference
 
-See [Android](http://flurry.github.io/flurry-android-sdk/)-[(FlurryAgent)](http://flurry.github.io/flurry-android-sdk/com/flurry/android/FlurryAgent.html) /
-[iOS](http://flurry.github.io/flurry-ios-sdk/)-[(Flurry)](http://flurry.github.io/flurry-ios-sdk/interface_flurry.html) for the Flurry references.
+See [Android](http://flurry.github.io/flurry-android-sdk/analytics/index.html)-[(FlurryAgent)](http://flurry.github.io/flurry-android-sdk/analytics/com/flurry/android/FlurryAgent.html) /
+[iOS](http://flurry.github.io/flurry-ios-sdk/Flurry%20Analytics%20API%20Documentation/index.html)-[(Flurry)](http://flurry.github.io/flurry-ios-sdk/Flurry%20Analytics%20API%20Documentation/interface_flurry.html) for the Flurry references.
 
 - **Methods in Flurry.builder to initialize Flurry Agent**
 
@@ -316,7 +315,7 @@ See [Android](http://flurry.github.io/flurry-android-sdk/)-[(FlurryAgent)](http:
 
 - **Methods to set Flurry preferences**
 
-  ```javascript
+  ```dart
   void Flurry.setContinueSessionMillis(int sessionMillis);
   void Flurry.setCrashReporting(bool crashReporting);
   void Flurry.setIncludeBackgroundSessionsInMetrics(bool includeBackgroundSessionsInMetrics);
@@ -843,4 +842,4 @@ See [Android](http://flurry.github.io/flurry-android-sdk/)-[(FlurryAgent)](http:
 
 Copyright 2018 Oath Inc.
 
-This project is licensed under the terms of the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) open source license. Please refer to [LICENSE](LICENSE) for the full terms.
+This project is licensed under the terms of the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) open source license. Please refer to [LICENSE](https://github.com/flurry/flutter-flurry-sdk/blob/main/LICENSE) for the full terms.

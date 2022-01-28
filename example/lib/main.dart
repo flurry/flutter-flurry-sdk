@@ -1,239 +1,195 @@
+// Copyright 2022, Yahoo Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_flurry_sdk/flurry.dart';
-
-import 'analytics.dart';
-import 'user_properties.dart';
-import 'config.dart';
-import 'public_apis.dart';
-
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    var routes = <String, WidgetBuilder>{
-      UserPropertiesPage.routeName: (BuildContext context) => new UserPropertiesPage(title: "User Properties"),
-      PublicAPIPage.routeName: (BuildContext context) => new PublicAPIPage(title: "Public APIs"),
-      AnalyticsPage.routeName: (BuildContext context) => new AnalyticsPage(title: "Analytics"),
-      ConfigPage.routeName: (BuildContext context) => new ConfigPage(title: "Config"),
-    };
-    return new MaterialApp(
-      title: 'Flutter Test',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: new MyHomePage(title: 'Flutter Test Home'),
-      routes: routes,
-    );
-  }
+  MyAppState createState() => MyAppState();
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => new _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> with MessagingListener, PublisherSegmentationListener {
-  String _platformVersion = 'Unknown';
-
+class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
     initPlatformState();
   }
 
-  Future<void> initPlatformState() {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      Flurry.builder.withLogEnabled(true)
-          .withLogLevel(LogLevel.verbose)
-          .withCrashReporting(true)
-          .withAppVersion("1.0.0")
-          .withIncludeBackgroundSessionsInMetrics(true)
-          .withMessaging(true, this)
-          .withSslPinningEnabled(true)
-          .withPerformanceMetrics(Performance.all)
-          .build(androidAPIKey: 'C9R699NJWSMJVPQWJ273',
-                 iosAPIKey: 'RPBHT5CJFFJ9WCS3C5R6');
-
-      Flurry.setContinueSessionMillis(10000);
-      Flurry.setCrashReporting(true);
-      Flurry.setIncludeBackgroundSessionsInMetrics(true);
-      Flurry.setLogEnabled(true);
-      Flurry.setLogLevel(LogLevel.verbose);
-      Flurry.setSslPinningEnabled(true);
-
-      // ios test config use - RPBHT5CJFFJ9WCS3C5R6
-      // ios use default - VSWDMD4N49ZZ8ZNWWVCB
-      // android use default - C9R699NJWSMJVPQWJ273
-
-      // Flurry.openPrivacyDashboard();
-      Param paramBuilder = new Param();
-      paramBuilder.putStringParam(EventParam.userId, '12345');
-      paramBuilder.putStringParam(EventParam.contentName, 'flutter test app');
-      paramBuilder.putDouble('double', 1.2345);
-      paramBuilder.removeParam(EventParam.userId);
-      Flurry.logStandardEvent(FlurryEvent.login, paramBuilder);
-
-      Flurry.publisherSegmentation.registerListener(this);
-      Flurry.publisherSegmentation.fetch();
-
-    } on PlatformException {
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) {
-      return null;
-    }
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+  Future<void> initPlatformState() async {
+    // Init and run Flurry APIs asynchronously.
+    await FlurryExample.init();
+    await FlurryExample.example();
+    await FlurryExample.config();
+    await FlurryExample.publisherSegmentation();
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
-      body: Center(
-        child: Container(
-          margin: EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              Card(
-                elevation: 10,
-                child: MaterialButton(
-                  height: 50.0,
-                  minWidth: 300.0,
-                  color: Colors.white,
-                  textColor: Colors.blue,
-                  child: Text(
-                    "Analytics",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.left,
-                  ),
-                  onPressed: () => {
-                    _onAnalyticsButtonPressed()
-                  },
-                  splashColor: Colors.blueAccent,
-                ),
-              ),
-              Card(
-                elevation: 10,
-                child: MaterialButton(
-                  height: 50.0,
-                  minWidth: 300.0,
-                  color: Colors.white,
-                  textColor: Colors.blue,
-                  child: Text(
-                    "Config",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.left,
-                  ),
-                  onPressed: () => {
-                    _onConfigButtonPressed()
-                  },
-                  splashColor: Colors.blueAccent,
-                ),
-              ),
-              Card(
-                elevation: 10,
-                child: MaterialButton(
-                  height: 50.0,
-                  minWidth: 300.0,
-                  color: Colors.white,
-                  textColor: Colors.blue,
-                  child: Text(
-                    "User Property",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.left,
-                  ),
-                  onPressed: () => {
-                    _onUserPropertiesButtonPressed()
-                  },
-                  splashColor: Colors.blueAccent,
-                ),
-              ),
-              Card(
-                elevation: 10,
-                child: MaterialButton(
-                  height: 50.0,
-                  minWidth: 300.0,
-                  color: Colors.white,
-                  textColor: Colors.blue,
-                  child: Text(
-                    "Public APIs",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.left,
-                  ),
-                  onPressed: () => {
-                    _onPublicButtonPressed()
-                  },
-                  splashColor: Colors.blueAccent,
-                ),
-              ),
-            ],
-          ),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter example for Flurry SDK'),
+        ),
+        body: Center(
+          child: Text('Flutter Plugin for Flurry SDK started.'),
         ),
       ),
     );
   }
+}
 
-  void _onAnalyticsButtonPressed() {
-    Navigator.pushNamed(context, AnalyticsPage.routeName);
+class FlurryExample {
+  static const String FLURRY_ANDROID_API_KEY = 'C9R699NJWSMJVPQWJ273';
+  static const String FLURRY_IOS_API_KEY = 'RPBHT5CJFFJ9WCS3C5R6';
+
+  static void init() {
+    // Init Flurry once as early as possible recommended in main.dart.
+    // For each platform (Android, iOS) where the app runs you need to acquire a unique Flurry API Key.
+    // i.e., you need two API keys if you are going to release the app on both Android and iOS platforms.
+    // If you are building for TV platforms, you will need two API keys for Android TV and tvOS.
+    Flurry.builder
+        .withCrashReporting(true)
+        .withLogEnabled(true)
+        .withLogLevel(LogLevel.debug)
+        .withMessaging(true, new MyMessagingListener())
+        .build(androidAPIKey: FLURRY_ANDROID_API_KEY,
+                   iosAPIKey: FLURRY_IOS_API_KEY);
   }
 
-  void _onConfigButtonPressed() {
-    Navigator.pushNamed(context, ConfigPage.routeName);
+  static Future<void> example() async {
+    // Example to get Flurry versions.
+    int agentVersion = await Flurry.getAgentVersion();
+    print("Agent Version: $agentVersion");
+
+    String releaseVersion = await Flurry.getReleaseVersion();
+    print("Release Version: $releaseVersion");
+
+    String sessionId = await Flurry.getSessionId();
+    print("Session Id: $sessionId");
+
+    // Set Flurry preferences.
+    Flurry.setLogEnabled(true);
+    Flurry.setLogLevel(LogLevel.verbose);
+
+    // Set user preferences.
+    Flurry.setAge(36);
+    Flurry.setGender(Gender.female);
+    Flurry.setReportLocation(true);
+
+    // Set user properties.
+    Flurry.userProperties.setValue(UserProperties.propertyRegisteredUser, 'True');
+
+    // Log Flurry events.
+    Flurry.logEvent('Flutter Event');
+    Map<String, String> map = Map<String, String>();
+    for (int i = 0; i < 6; i++) {
+      map.putIfAbsent('$i', () => '$i');
+    }
+    Flurry.logTimedEventWithParameters('Flutter Timed Event', map, true);
+    Flurry.endTimedEvent('Flutter Timed Event');
+
+    // Log Flurry standard events.
+    Param paramBuilder = new Param()
+        .putDoubleParam(EventParam.totalAmount, 34.99)
+        .putBooleanParam(EventParam.success, true)
+        .putStringParam(EventParam.itemName, "book 1")
+        .putString("note", "This is an awesome book to purchase !!!");
+    Flurry.logStandardEvent(FlurryEvent.purchased, paramBuilder);
   }
 
-  void _onUserPropertiesButtonPressed() {
-    Navigator.pushNamed(context, UserPropertiesPage.routeName);
+  static void config() {
+    Flurry.config.registerListener(new MyConfigListener());
+    Flurry.config.fetchConfig();
   }
 
-  void _onPublicButtonPressed() {
-    Navigator.pushNamed(context, PublicAPIPage.routeName);
+  static void publisherSegmentation() {
+    Flurry.publisherSegmentation.registerListener(new MyPublisherSegmentationListener());
+    Flurry.publisherSegmentation.fetch();
+  }
+}
+
+class MyConfigListener with ConfigListener {
+  @override
+  void onFetchSuccess() {
+    // Data fetched, activate it.
+    Flurry.config.activateConfig();
   }
 
   @override
+  void onFetchNoChange() {
+    // Fetch finished, but data unchanged.
+    Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
+      print('Received unchanged data: ' + welcomeMessage);
+    });
+  }
+
+  @override
+  void onFetchError(bool isRetrying) {
+    // Fetch failed.
+    print('Fetch error! Retrying: ' + isRetrying.toString());
+  }
+
+  @override
+  void onActivateComplete(bool isCache) {
+    // Received cached data, or newly activated data.
+    Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
+      print((isCache ? 'Received cached data: ' : 'Received newly activated data: ') + welcomeMessage);
+    });
+  }
+}
+
+class MyMessagingListener with MessagingListener {
+  @override
   bool onNotificationClicked(Message message){
-    // TODO: implement didReceiveAction
-    print("push action callback!");
+    printMessage("onNotificationClicked", message);
     return false;
   }
 
   @override
   bool onNotificationReceived(Message message){
-    // TODO: implement didReceiveMessage
-    print("push receive callback!");
+    printMessage("onNotificationReceived", message);
     return false;
   }
 
   @override
   void onNotificationCancelled(Message message) {
-    // TODO: implement onNotificationCancelled
+    printMessage("onNotificationCancelled", message);
   }
 
   @override
   void onTokenRefresh(String token){
-    // TODO: implement onTokenRefresh
+    print("Flurry Messaging Type: onTokenRefresh" +
+        "\n    Token: " + token);
   }
 
+  static printMessage(String type, Message message) {
+    print('Flurry Messaging Type: ' + type +
+        '\n    Title: ' + message.title +
+        '\n    Body: ' + message.body +
+        '\n    ClickAction: ' + ((message.clickAction == null) ? 'null' : message.clickAction) +
+        '\n    Data:' + message.appData.toString());
+  }
+}
+
+class MyPublisherSegmentationListener with PublisherSegmentationListener {
   @override
-  void onFetched(Map<String, String> data){
-    print("PS onFetched");
+  void onFetched(Map<String, String> data) {
+    print("Publisher Segmentation data fetched:" + data.toString());
   }
 }

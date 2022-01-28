@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_flurry_sdk/Flurry.dart';
+import 'package:flutter_flurry_sdk/flurry.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('flutter_flurry_sdk');
+  const MethodChannel channel = MethodChannel('flurry_flutter_plugin');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

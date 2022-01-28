@@ -32,3 +32,5 @@ doc/api/
 android/libs
 example/android/local.properties
 example/android/app/libs
+example/android/app/google-services.json
+
