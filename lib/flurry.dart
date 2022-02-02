@@ -12,22 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:async';
-import 'dart:core';
 import 'dart:io';
-
 import 'package:flutter/services.dart';
 
-import 'flurry_agent.dart';
+import 'src/flurry_agent.dart';
 
-enum LogLevel {
-  verbose,
-  debug,
-  info,
-  warn,
-  error,
-  assertion
-}
+enum LogLevel { verbose, debug, info, warn, error, assertion }
 
 /// Constants for logging post install events using Flurry's FlurrySKAdNetwork class.
 enum SKAdNetworkEvent {
@@ -50,10 +40,7 @@ enum EventRecordStatus {
 }
 
 /// Constants for setting user gender in analytics SDK.
-enum Gender {
-  male,
-  female
-}
+enum Gender { male, female }
 
 /// A Flutter plugin for Flurry SDK.
 ///
@@ -63,14 +50,17 @@ enum Gender {
 /// Set of methods that allow developers to capture detailed, aggregate information
 /// regarding the use of their app by end users.
 class Flurry {
-  static const MethodChannel _channel = const MethodChannel('flurry_flutter_plugin');
+  static const MethodChannel _channel =
+      const MethodChannel('flurry_flutter_plugin');
 
-  static final FlurryAgent flurryAgent = (Platform.isAndroid || Platform.isIOS) ? new FlurryAgent() : null;
+  static final FlurryAgent flurryAgent =
+      (Platform.isAndroid || Platform.isIOS) ? new FlurryAgent() : null;
   static final Builder builder = Builder();
   static final UserProperties userProperties = UserProperties();
   static final Performance performance = Performance();
   static final Config config = Config();
-  static final PublisherSegmentation publisherSegmentation = PublisherSegmentation();
+  static final PublisherSegmentation publisherSegmentation =
+      PublisherSegmentation();
 
   static Future<String> getPlatformVersion() async {
     String version = await _channel.invokeMethod('getPlatformVersion');
@@ -79,7 +69,7 @@ class Flurry {
 
   /// Get constants for setting log level in analytics SDK.
   int getLogLevel(LogLevel logLevel) {
-    switch(logLevel) {
+    switch (logLevel) {
       case LogLevel.verbose:
       case LogLevel.debug:
       case LogLevel.info:
@@ -117,9 +107,11 @@ class Flurry {
   /// Set [includeBackgroundSessionsInMetrics] true if this session should be
   /// added to total sessions/DAUs when application state is inactive or background.
   /// This API needs to be called before starting session.
-  static void setIncludeBackgroundSessionsInMetrics([bool includeBackgroundSessionsInMetrics = true]) {
+  static void setIncludeBackgroundSessionsInMetrics(
+      [bool includeBackgroundSessionsInMetrics = true]) {
     if (flurryAgent != null) {
-      flurryAgent.setIncludeBackgroundSessionsInMetrics(includeBackgroundSessionsInMetrics);
+      flurryAgent.setIncludeBackgroundSessionsInMetrics(
+          includeBackgroundSessionsInMetrics);
     }
   }
 
@@ -235,8 +227,8 @@ class Flurry {
   static void addOriginWithParameters(String originName, String originVersion,
       Map<String, String> originParameters) {
     if (flurryAgent != null) {
-      flurryAgent.addOriginWithParameters(originName, originVersion,
-          originParameters);
+      flurryAgent.addOriginWithParameters(
+          originName, originVersion, originParameters);
     }
   }
 
@@ -259,7 +251,7 @@ class Flurry {
   }
 
   /// Returns the release version of the Flurry SDK.
-  static Future<String> getReleaseVersion() async{
+  static Future<String> getReleaseVersion() async {
     if (flurryAgent != null) {
       String version = await flurryAgent.getReleaseVersion();
       return version;
@@ -269,7 +261,7 @@ class Flurry {
   }
 
   /// Returns the session id of the current session.
-  static Future<String> getSessionId() async{
+  static Future<String> getSessionId() async {
     if (flurryAgent != null) {
       String sessionId = await flurryAgent.getSessionId();
       return sessionId;
@@ -293,8 +285,8 @@ class Flurry {
   ///
   /// Logs [eventId] as a non timed event or a timed event based on boolean
   /// [timed]. Returns the event recording status of the logged event.
-  static Future<EventRecordStatus> logTimedEvent(String eventId, bool timed)
-  async {
+  static Future<EventRecordStatus> logTimedEvent(
+      String eventId, bool timed) async {
     if (flurryAgent != null) {
       int eventRecordStatus = await flurryAgent.logTimedEvent(eventId, timed);
       return EventRecordStatus.values[eventRecordStatus];
@@ -308,11 +300,11 @@ class Flurry {
   /// Logs [eventId] with maximum of 10 [parameters] which helps in specifying
   /// the characteristics of the event. Returns the event recording status
   /// of the logged event.
-  static Future<EventRecordStatus> logEventWithParameters(String eventId,
-      Map<String, String> parameters) async {
+  static Future<EventRecordStatus> logEventWithParameters(
+      String eventId, Map<String, String> parameters) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logEventWithParameters(eventId,
-          parameters);
+      int eventRecordStatus =
+          await flurryAgent.logEventWithParameters(eventId, parameters);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -324,10 +316,11 @@ class Flurry {
   /// Logs [eventId] as a non timed event or a timed event based on boolean
   /// [timed]. Use maximum of 10 [parameters] to specify the characters of the
   /// event. Returns the event recording status of the logged event.
-  static Future<EventRecordStatus> logTimedEventWithParameters(String eventId,
-      Map<String, String> parameters, bool timed) async {
+  static Future<EventRecordStatus> logTimedEventWithParameters(
+      String eventId, Map<String, String> parameters, bool timed) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logTimedEventWithParameters(eventId, parameters, timed);
+      int eventRecordStatus = await flurryAgent.logTimedEventWithParameters(
+          eventId, parameters, timed);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -349,8 +342,8 @@ class Flurry {
   /// existing parameters to the new [parameters] Maximum of 10 unique
   /// parameters total can be passed for an event, including those passed when
   /// the event was initiated.
-  static void endTimedEventWithParameters(String eventId, Map<String,
-      String> parameters) {
+  static void endTimedEventWithParameters(
+      String eventId, Map<String, String> parameters) {
     if (flurryAgent != null) {
       flurryAgent.endTimedEventWithParameters(eventId, parameters);
     }
@@ -376,8 +369,8 @@ class Flurry {
   static void onErrorWithParameters(String errorId, String message,
       String errorClass, Map<String, String> parameters) {
     if (flurryAgent != null) {
-      flurryAgent.onErrorWithParameters(errorId, message, errorClass,
-          parameters);
+      flurryAgent.onErrorWithParameters(
+          errorId, message, errorClass, parameters);
     }
   }
 
@@ -398,11 +391,16 @@ class Flurry {
   /// characteristics of the payment. Returns the event recording status of the
   /// logged event.
   static Future<EventRecordStatus> logPayment(
-      String productName, String productId, int quantity, double price,
-      String currency, String transactionId, Map<String, String> parameters) async {
+      String productName,
+      String productId,
+      int quantity,
+      double price,
+      String currency,
+      String transactionId,
+      Map<String, String> parameters) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logPayment(productName, productId, quantity, price,
-          currency, transactionId, parameters);
+      int eventRecordStatus = await flurryAgent.logPayment(productName,
+          productId, quantity, price, currency, transactionId, parameters);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -414,14 +412,15 @@ class Flurry {
   /// Records a standard parameterized event specified by event type named [id]
   /// and maximum of 10 parameters passed as [param]. Returns the event recording
   /// status of the logged standard event.
-  static Future<EventRecordStatus> logStandardEvent(FlurryEvent id, Param param) async{
+  static Future<EventRecordStatus> logStandardEvent(
+      FlurryEvent id, Param param) async {
     if (flurryAgent != null) {
       int eventRecordStatus = await flurryAgent.logStandardEvent(id, param);
       return EventRecordStatus.values[eventRecordStatus];
     }
     return EventRecordStatus.eventFailed;
   }
-  
+
   /// Enables implicit recording of In-App transactions.
   ///
   /// This method needs to be called before any transaction is finalized.
@@ -479,10 +478,7 @@ class Builder {
     }
   }
 
-  void build({
-    String androidAPIKey = "",
-    String iosAPIKey = ""}) {
-
+  void build({String androidAPIKey = "", String iosAPIKey = ""}) {
     if (builderAgent != null) {
       Map<String, dynamic> arguments = <String, dynamic>{};
       arguments.putIfAbsent("androidAPIKey", () => androidAPIKey);
@@ -542,9 +538,11 @@ class Builder {
   /// Set [includeBackgroundSessionsInMetrics] true if this session should be
   /// added to total sessions/DAUs when application state is inactive or background.
   /// This API needs to be called before starting session.
-  Builder withIncludeBackgroundSessionsInMetrics([bool includeBackgroundSessionsInMetrics = true]) {
+  Builder withIncludeBackgroundSessionsInMetrics(
+      [bool includeBackgroundSessionsInMetrics = true]) {
     if (builderAgent != null) {
-      builderAgent.withIncludeBackgroundSessionsInMetrics(includeBackgroundSessionsInMetrics);
+      builderAgent.withIncludeBackgroundSessionsInMetrics(
+          includeBackgroundSessionsInMetrics);
     }
     return this;
   }
@@ -588,7 +586,8 @@ class Builder {
   /// 1) Registers for Notifications.
   /// 2) Handles device token.
   /// 3) Listens for callbacks from UIApplication and UNUserNotificationCenter.
-  Builder withMessaging([bool enableMessaging = true, MessagingListener listener]) {
+  Builder withMessaging(
+      [bool enableMessaging = true, MessagingListener listener]) {
     if (!enableMessaging) {
       return this;
     }
@@ -599,17 +598,16 @@ class Builder {
       if (Platform.isIOS) {
         messagingAgent.withMessaging();
       } else {
-        print("To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.");
+        print(
+            "To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.");
       }
     }
     return this;
   }
-
 }
 
 /// User Properties class for Flurry
 class UserProperties {
-
   /// Standard User Property: Currency Preference.
   ///
   /// Follow ISO 4217: https://en.wikipedia.org/wiki/ISO_4217
@@ -698,7 +696,8 @@ class UserProperties {
   /// and does not error
   void removeValues(String propertyName, List<String> propertyValues) {
     if (userPropertiesAgent != null) {
-      userPropertiesAgent.removeUserPropertyValues(propertyName, propertyValues);
+      userPropertiesAgent.removeUserPropertyValues(
+          propertyName, propertyValues);
     }
   }
 
@@ -766,7 +765,7 @@ class Performance {
   ///   Flurry.Performance.LogResourceLogger("My ID");
   /// ```
   void startResourceLogger() {
-    if (performanceAgent!= null) {
+    if (performanceAgent != null) {
       performanceAgent.startResourceLogger();
     }
   }
@@ -794,14 +793,13 @@ class Message {
 /// take actions within the App, which is useful when used with the Flurry
 /// Messaging
 mixin MessagingListener {
-  
   /// Informs the app when Flurry Notification received.
   ///
   /// Returns true if you've handled the notification; false if you haven't and
   /// want Flurry to handle it.
   /// **For Android only, you might want to return false for iOS.**
   bool onNotificationReceived(Message message);
-  
+
   /// Informs the app when Flurry Notification receives an action.
   ///
   /// Return true if you've handled the notification; false if you haven't and
@@ -823,7 +821,6 @@ mixin MessagingListener {
 /// A set of actions that allow an observing class to take action based on
 /// certain events, such as fetch operations or activations.
 mixin ConfigListener {
-  
   /// Informs the app when a fetch is initiated and completed with a change.
   void onFetchSuccess();
 
@@ -880,7 +877,7 @@ class Config {
       configAgent = new ConfigAgent();
     }
   }
-  
+
   /// Fetches the most recent config from the server for this client.
   ///
   /// Upon completion of the fetch, the [ConfigListener] will be called to make
@@ -895,7 +892,7 @@ class Config {
       configAgent.fetchConfig();
     }
   }
-  
+
   /// Aggressively activates the latest config if it has not been activated.
   ///
   /// Puts the latest config directly into use, unlike the typical operation
@@ -932,7 +929,7 @@ class Config {
   /// but all attempts should be made to validate that the returned value is,
   /// indeed, a fully formed string.  If no value is provided in the config the
   /// [defaultValue] will be chosen.
-  Future<String> getConfigString(String key, String defaultValue) async{
+  Future<String> getConfigString(String key, String defaultValue) async {
     if (configAgent != null) {
       String value = await configAgent.getConfigString(key, defaultValue);
       return value;
@@ -941,7 +938,7 @@ class Config {
   }
 }
 
-enum FlurryEvent{
+enum FlurryEvent {
   /// Log this event when a user clicks on an Ad.
   ///
   /// Suggested event params: adType
@@ -955,7 +952,7 @@ enum FlurryEvent{
   ///
   /// Mandatory event params : none
   adImpression,
-  
+
   /// Log this event when a user is granted a reward for viewing a rewarded Ad.
   ///
   /// Suggested event params : adType
@@ -1361,49 +1358,92 @@ enum FlurryEvent{
 
 /// [EventParam] contains all Flurry defined parameter keys to log standard event.
 class EventParam {
-  static final StringParam adType = new StringParam(StandardParam.eventParamAdType);
-  static final StringParam levelName = new StringParam(StandardParam.eventParamLevelName);
-  static final IntegerParam levelNumber = new IntegerParam(StandardParam.eventParamLevelNumber);
-  static final StringParam contentName = new StringParam(StandardParam.eventParamContentName);
-  static final StringParam contentType = new StringParam(StandardParam.eventParamContentType);
-  static final StringParam contentId = new StringParam(StandardParam.eventParamContentId);
-  static final StringParam creditName = new StringParam(StandardParam.eventParamCreditName);
-  static final StringParam creditType = new StringParam(StandardParam.eventParamCreditType);
-  static final StringParam creditId = new StringParam(StandardParam.eventParamCreditId);
-  static final BooleanParam isCurrencySoft = new BooleanParam(StandardParam.eventParamIsCurrencySoft);
-  static final StringParam currencyType = new StringParam(StandardParam.eventParamCurrencyType);
-  static final StringParam paymentType = new StringParam(StandardParam.eventParamPaymentType);
-  static final StringParam itemName = new StringParam(StandardParam.eventParamItemName);
-  static final StringParam itemType = new StringParam(StandardParam.eventParamItemType);
-  static final StringParam itemId = new StringParam(StandardParam.eventParamItemId);
-  static final IntegerParam itemCount = new IntegerParam(StandardParam.eventParamItemCount);
-  static final StringParam itemCategory = new StringParam(StandardParam.eventParamItemCategory);
-  static final StringParam itemListType = new StringParam(StandardParam.eventParamItemListType);
-  static final DoubleParam price = new DoubleParam(StandardParam.eventParamPrice);
-  static final DoubleParam totalAmount = new DoubleParam(StandardParam.eventParamTotalAmount);
-  static final StringParam achievementId = new StringParam(StandardParam.eventParamAchievementId);
-  static final IntegerParam score = new IntegerParam(StandardParam.eventParamScore);
-  static final StringParam rating = new StringParam(StandardParam.eventParamRating);
-  static final StringParam transactionId = new StringParam(StandardParam.eventParamTransactionId);
-  static final BooleanParam success = new BooleanParam(StandardParam.eventParamSuccess);
-  static final BooleanParam isAnnualSubscription = new BooleanParam(StandardParam.eventParamIsAnnualSubscription);
-  static final StringParam subscriptionCountry = new StringParam(StandardParam.eventParamSubscriptionCountry);
-  static final IntegerParam trialDays = new IntegerParam(StandardParam.eventParamTrialDays);
-  static final StringParam predictedLTV = new StringParam(StandardParam.eventParamPredictedLTV);
-  static final StringParam groupName = new StringParam(StandardParam.eventParamGroupName);
-  static final StringParam tutorialName = new StringParam(StandardParam.eventParamTutorialName);
-  static final IntegerParam stepNumber = new IntegerParam(StandardParam.eventParamStepNumber);
-  static final StringParam userId = new StringParam(StandardParam.eventParamUserId);
-  static final StringParam method = new StringParam(StandardParam.eventParamMethod);
-  static final StringParam query = new StringParam(StandardParam.eventParamQuery);
-  static final StringParam searchType = new StringParam(StandardParam.eventParamSearchType);
-  static final StringParam socialContentName = new StringParam(StandardParam.eventParamSocialContentName);
-  static final StringParam socialContentId = new StringParam(StandardParam.eventParamSocialContentId);
-  static final StringParam likeType = new StringParam(StandardParam.eventParamLikeType);
-  static final StringParam mediaName = new StringParam(StandardParam.eventParamMediaName);
-  static final StringParam mediaType = new StringParam(StandardParam.eventParamMediaType);
-  static final StringParam mediaId = new StringParam(StandardParam.eventParamMediaId);
-  static final IntegerParam duration = new IntegerParam(StandardParam.eventParamDuration);
+  static final StringParam adType =
+      new StringParam(StandardParam.eventParamAdType);
+  static final StringParam levelName =
+      new StringParam(StandardParam.eventParamLevelName);
+  static final IntegerParam levelNumber =
+      new IntegerParam(StandardParam.eventParamLevelNumber);
+  static final StringParam contentName =
+      new StringParam(StandardParam.eventParamContentName);
+  static final StringParam contentType =
+      new StringParam(StandardParam.eventParamContentType);
+  static final StringParam contentId =
+      new StringParam(StandardParam.eventParamContentId);
+  static final StringParam creditName =
+      new StringParam(StandardParam.eventParamCreditName);
+  static final StringParam creditType =
+      new StringParam(StandardParam.eventParamCreditType);
+  static final StringParam creditId =
+      new StringParam(StandardParam.eventParamCreditId);
+  static final BooleanParam isCurrencySoft =
+      new BooleanParam(StandardParam.eventParamIsCurrencySoft);
+  static final StringParam currencyType =
+      new StringParam(StandardParam.eventParamCurrencyType);
+  static final StringParam paymentType =
+      new StringParam(StandardParam.eventParamPaymentType);
+  static final StringParam itemName =
+      new StringParam(StandardParam.eventParamItemName);
+  static final StringParam itemType =
+      new StringParam(StandardParam.eventParamItemType);
+  static final StringParam itemId =
+      new StringParam(StandardParam.eventParamItemId);
+  static final IntegerParam itemCount =
+      new IntegerParam(StandardParam.eventParamItemCount);
+  static final StringParam itemCategory =
+      new StringParam(StandardParam.eventParamItemCategory);
+  static final StringParam itemListType =
+      new StringParam(StandardParam.eventParamItemListType);
+  static final DoubleParam price =
+      new DoubleParam(StandardParam.eventParamPrice);
+  static final DoubleParam totalAmount =
+      new DoubleParam(StandardParam.eventParamTotalAmount);
+  static final StringParam achievementId =
+      new StringParam(StandardParam.eventParamAchievementId);
+  static final IntegerParam score =
+      new IntegerParam(StandardParam.eventParamScore);
+  static final StringParam rating =
+      new StringParam(StandardParam.eventParamRating);
+  static final StringParam transactionId =
+      new StringParam(StandardParam.eventParamTransactionId);
+  static final BooleanParam success =
+      new BooleanParam(StandardParam.eventParamSuccess);
+  static final BooleanParam isAnnualSubscription =
+      new BooleanParam(StandardParam.eventParamIsAnnualSubscription);
+  static final StringParam subscriptionCountry =
+      new StringParam(StandardParam.eventParamSubscriptionCountry);
+  static final IntegerParam trialDays =
+      new IntegerParam(StandardParam.eventParamTrialDays);
+  static final StringParam predictedLTV =
+      new StringParam(StandardParam.eventParamPredictedLTV);
+  static final StringParam groupName =
+      new StringParam(StandardParam.eventParamGroupName);
+  static final StringParam tutorialName =
+      new StringParam(StandardParam.eventParamTutorialName);
+  static final IntegerParam stepNumber =
+      new IntegerParam(StandardParam.eventParamStepNumber);
+  static final StringParam userId =
+      new StringParam(StandardParam.eventParamUserId);
+  static final StringParam method =
+      new StringParam(StandardParam.eventParamMethod);
+  static final StringParam query =
+      new StringParam(StandardParam.eventParamQuery);
+  static final StringParam searchType =
+      new StringParam(StandardParam.eventParamSearchType);
+  static final StringParam socialContentName =
+      new StringParam(StandardParam.eventParamSocialContentName);
+  static final StringParam socialContentId =
+      new StringParam(StandardParam.eventParamSocialContentId);
+  static final StringParam likeType =
+      new StringParam(StandardParam.eventParamLikeType);
+  static final StringParam mediaName =
+      new StringParam(StandardParam.eventParamMediaName);
+  static final StringParam mediaType =
+      new StringParam(StandardParam.eventParamMediaType);
+  static final StringParam mediaId =
+      new StringParam(StandardParam.eventParamMediaId);
+  static final IntegerParam duration =
+      new IntegerParam(StandardParam.eventParamDuration);
 }
 
 enum StandardParam {
@@ -1656,7 +1696,6 @@ class BooleanParam extends ParamBase {
 /// Provides listener method for receiving callbacks related to publisher data
 /// is fetched
 mixin PublisherSegmentationListener {
-
   /// Informs the app when publisher data is fetched.
   ///
   /// [data] is a Map of key-value paired configuration for publisher segmentation
@@ -1674,7 +1713,7 @@ class PublisherSegmentation {
   }
 
   /// Indicates whether the publisher data is fetched and ready to use.
-  Future<bool> isFetchFinished() async{
+  Future<bool> isFetchFinished() async {
     if (publisherSegmentationAgent != null) {
       return await publisherSegmentationAgent.isFetchFinished();
     }
@@ -1709,11 +1748,10 @@ class PublisherSegmentation {
   ///
   /// Returns a map of key-value paired configuration for publisher segmentation
   /// data. If not yet fetched, it will return the cached segments data.
-  Future<Map<String, String>> getPublisherData() async{
+  Future<Map<String, String>> getPublisherData() async {
     if (publisherSegmentationAgent != null) {
       return await publisherSegmentationAgent.getPublisherData();
     }
     return null;
   }
 }
-

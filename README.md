@@ -17,34 +17,17 @@ A Flutter plugin for Flurry SDK
 
 ## Installation
 
-1. Install Flurry Flutter plugin from [https://github.com/flurry/flutter-flurry-sdk](https://github.com/flurry/flutter-flurry-sdk) or add it as a dependency from Github. 
+1. Install Flutter Flurry SDK plugin by running this command in the terminal from the directory containing `pubspec.yaml` file.
 
-2. Open the pubspec.yaml file in your project and add "flutter_flurry_sdk" as a dependency to your project. 
    ```bash
-   dependencies:
-     flutter_flurry_sdk:
+   $ flutter pub add flutter_flurry_sdk
    ```
-   1. If you want to specify a version range:
-        1. Using range constraints: ```flutter_flurry_sdk: `>=1.0.0 <2.0.0` ```
-        2. Using range constraints with caret syntax: ```flutter_flurry_sdk: `^1.0.0` ```
-3. Specify path under the flutter_flurry_sdk plugin dependency in pubspec.yaml
-    1. Flutter plugin from local directories:
-       ```
-            path: /path/to/flutter_flurry_sdk
-       ```
-    2. Flutter plugin from Github:
-        ```
-            git:
-                url: git://github.com/flutter_flurry_sdk.git
-       ```
-4. run ``` flutter pub get``` in the terminal from the directory containing pubspec.yaml file or click "Packages get" in 
-Intellij or Android Studio.
 
-5. Flutter Flurry SDK has been added as a dependency. Now, import the flurry.dart class in the
-files calling Flurry SDK APIs.
-```dart
-import 'package:flutter_flurry_sdk/flurry.dart';
-```
+2. Flutter Flurry SDK has been added as a dependency. Now, import the `flurry.dart` class in the files calling Flurry SDK APIs.
+
+   ```dart
+   import 'package:flutter_flurry_sdk/flurry.dart';
+   ```
 
 ### Android
 
@@ -113,11 +96,11 @@ import 'package:flutter_flurry_sdk/flurry.dart';
   To set up Flurry Push, please take the following steps.
 
   1. Open your `.xcworkspace` file which is under the `ios` folder. Go to "Capabilities" tab and enable Push Notifications.
-     ![push_ios_1](images/push_ios_1.png)
+     ![push_ios_1](https://github.com/flurry/flutter-flurry-sdk/raw/main/images/push_ios_1.png)
   2. Enable Background Modes (Background Fetch and Remote Notifications turned on).
-     ![push_ios_2](images/push_ios_2.png)
+     ![push_ios_2](https://github.com/flurry/flutter-flurry-sdk/raw/main/images/push_ios_2.png)
      Now your `Info.plist` should contain the following items. For more information, please see [Push Setup](https://developer.yahoo.com/flurry/docs/push/integration/ios/).
-     ![push_ios_3](images/push_ios_3.png)
+     ![push_ios_3](https://github.com/flurry/flutter-flurry-sdk/raw/main/images/push_ios_3.png)
   3. Set up "iOS Authorization" in Flurry [Push Authorization](https://developer.yahoo.com/flurry/docs/push/authorization/).
 
 ### tvOS
@@ -142,8 +125,9 @@ import 'package:flutter_flurry_sdk/flurry.dart';
        .withCrashReporting(true)
        .withLogEnabled(true)
        .withLogLevel(LogLevel.debug)
-       .build(androidAPIKey: FLURRY_ANDROID_API_KEY,
-                  iosAPIKey: FLURRY_IOS_API_KEY);
+       .build(
+           androidAPIKey: FLURRY_ANDROID_API_KEY,
+               iosAPIKey: FLURRY_IOS_API_KEY);
    ```
 
 - `lib/example.dart`
@@ -245,13 +229,13 @@ import 'package:flutter_flurry_sdk/flurry.dart';
    
    class MyMessagingListener with MessagingListener {
        @override
-       bool onNotificationClicked(Message message){
+       bool onNotificationClicked(Message message) {
            printMessage("onNotificationClicked", message);
            return false;
        }
    
        @override
-       bool onNotificationReceived(Message message){
+       bool onNotificationReceived(Message message) {
            printMessage("onNotificationReceived", message);
            return false;
        }
@@ -262,7 +246,7 @@ import 'package:flutter_flurry_sdk/flurry.dart';
        }
    
        @override
-       void onTokenRefresh(String token){
+       void onTokenRefresh(String token) {
            print("Flurry Messaging Type: onTokenRefresh" +
                "\n    Token: " + token);
        }
@@ -293,8 +277,8 @@ import 'package:flutter_flurry_sdk/flurry.dart';
 
 ## API Reference
 
-See [Android](http://flurry.github.io/flurry-android-sdk/analytics/index.html)-[(FlurryAgent)](http://flurry.github.io/flurry-android-sdk/analytics/com/flurry/android/FlurryAgent.html) /
-[iOS](http://flurry.github.io/flurry-ios-sdk/Flurry%20Analytics%20API%20Documentation/index.html)-[(Flurry)](http://flurry.github.io/flurry-ios-sdk/Flurry%20Analytics%20API%20Documentation/interface_flurry.html) for the Flurry references.
+See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-[(FlurryAgent)](https://flurry.github.io/flurry-android-sdk/analytics/com/flurry/android/FlurryAgent.html) /
+[iOS](https://flurry.github.io/flurry-ios-sdk/Flurry%20Analytics%20API%20Documentation/index.html)-[(Flurry)](https://flurry.github.io/flurry-ios-sdk/Flurry%20Analytics%20API%20Documentation/interface_flurry.html) for the Flurry references.
 
 - **Methods in Flurry.builder to initialize Flurry Agent**
 
@@ -840,6 +824,6 @@ See [Android](http://flurry.github.io/flurry-android-sdk/analytics/index.html)-[
 
 ## License
 
-Copyright 2018 Oath Inc.
+Copyright 2022 Yahoo Inc.
 
-This project is licensed under the terms of the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) open source license. Please refer to [LICENSE](https://github.com/flurry/flutter-flurry-sdk/blob/main/LICENSE) for the full terms.
+This project is licensed under the terms of the [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) open source license. Please refer to [LICENSE](https://raw.githubusercontent.com/flurry/flutter-flurry-sdk/main/LICENSE) for the full terms.

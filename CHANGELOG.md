@@ -3,6 +3,13 @@
 * [Flurry Android SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/android/)
 * [Flurry iOS SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/ios/)
 
+### v1.2.1 (2022-02-06)
+
+#### Bug Fixes
+
+* Update secure links, and installation instructions in README
+* Improve codes static analysis, and format libraries codes
+
 ## v1.2.0 (2022-02-02)
 
 #### Features

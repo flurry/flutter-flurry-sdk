@@ -32,11 +32,11 @@ class MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState() async {
-    // Init and run Flurry APIs asynchronously.
-    await FlurryExample.init();
-    await FlurryExample.example();
-    await FlurryExample.config();
-    await FlurryExample.publisherSegmentation();
+    // Init and run Flurry APIs.
+    FlurryExample.init();
+    FlurryExample.example();
+    FlurryExample.config();
+    FlurryExample.publisherSegmentation();
   }
 
   @override
@@ -56,7 +56,7 @@ class MyAppState extends State<MyApp> {
 
 class FlurryExample {
   static const String FLURRY_ANDROID_API_KEY = 'C9R699NJWSMJVPQWJ273';
-  static const String FLURRY_IOS_API_KEY = 'RPBHT5CJFFJ9WCS3C5R6';
+  static const String FLURRY_IOS_API_KEY     = 'RPBHT5CJFFJ9WCS3C5R6';
 
   static void init() {
     // Init Flurry once as early as possible recommended in main.dart.
@@ -68,11 +68,12 @@ class FlurryExample {
         .withLogEnabled(true)
         .withLogLevel(LogLevel.debug)
         .withMessaging(true, new MyMessagingListener())
-        .build(androidAPIKey: FLURRY_ANDROID_API_KEY,
-                   iosAPIKey: FLURRY_IOS_API_KEY);
+        .build(
+            androidAPIKey: FLURRY_ANDROID_API_KEY,
+                iosAPIKey: FLURRY_IOS_API_KEY);
   }
 
-  static Future<void> example() async {
+  static void example() async {
     // Example to get Flurry versions.
     int agentVersion = await Flurry.getAgentVersion();
     print("Agent Version: $agentVersion");
@@ -156,13 +157,13 @@ class MyConfigListener with ConfigListener {
 
 class MyMessagingListener with MessagingListener {
   @override
-  bool onNotificationClicked(Message message){
+  bool onNotificationClicked(Message message) {
     printMessage("onNotificationClicked", message);
     return false;
   }
 
   @override
-  bool onNotificationReceived(Message message){
+  bool onNotificationReceived(Message message) {
     printMessage("onNotificationReceived", message);
     return false;
   }
