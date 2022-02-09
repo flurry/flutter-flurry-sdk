@@ -19,7 +19,7 @@ import '../flurry.dart';
 
 class FlurryAgent {
   static const MethodChannel _agentChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
 
   void setContinueSessionMillis(int sessionMillis) {
     if (Platform.isIOS) {
@@ -187,16 +187,19 @@ class FlurryAgent {
   }
 
   Future<int> logStandardEvent(FlurryEvent id, Param param) async {
-    Map<int, String> flurryParamMap = new Map<int, String>();
-    Map<String, String> userParamMap = new Map<String, String>();
+    Map<int, String> flurryParamMap = <int, String>{};
+    Map<String, String> userParamMap = <String, String>{};
 
-    for (MapEntry<dynamic, String> e in param.builderAgent._map.entries) {
-      // if user defined key
-      if (e.key is String) {
-        userParamMap.putIfAbsent(e.key, () => e.value);
-      } else {
-        ParamBase p = e.key as ParamBase;
-        flurryParamMap.putIfAbsent(p.id.index, () => e.value);
+    ParamBuilderAgent? builderAgent = param.builderAgent;
+    if (builderAgent != null) {
+      for (MapEntry<dynamic, String> e in builderAgent._map.entries) {
+        // if user defined key
+        if (e.key is String) {
+          userParamMap.putIfAbsent(e.key, () => e.value);
+        } else {
+          ParamBase p = e.key as ParamBase;
+          flurryParamMap.putIfAbsent(p.id.index, () => e.value);
+        }
       }
     }
     return await _agentChannel.invokeMethod(
@@ -298,8 +301,12 @@ class FlurryAgent {
   }
 
   //out or reference paramters are not possible in dart
-  String keysToString(Map<String, String> map) {
-    var keyStr = new StringBuffer();
+  String keysToString(Map<String, String>? map) {
+    if (map == null) {
+      return "";
+    }
+
+    var keyStr = StringBuffer();
 
     for (String key in map.keys) {
       keyStr.write(key);
@@ -313,8 +320,12 @@ class FlurryAgent {
   }
 
   //out or reference parameters are not possible in dart.
-  String valuesToString(Map<String, String> map) {
-    var valueStr = new StringBuffer();
+  String valuesToString(Map<String, String>? map) {
+    if (map == null) {
+      return "";
+    }
+
+    var valueStr = StringBuffer();
 
     for (String value in map.values) {
       valueStr.write(value);
@@ -330,7 +341,7 @@ class FlurryAgent {
 
 class BuilderAgent {
   static const MethodChannel _agentBuilderChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
 
   //cannot have async call to objective c method from constructor
   BuilderAgent() {
@@ -418,7 +429,7 @@ class BuilderAgent {
 
 class UserPropertiesAgent {
   static const MethodChannel _agentUserPropertiesIOSChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
 
   void addUserPropertyValue(String propertyName, String propertyValue) {
     _agentUserPropertiesIOSChannel.invokeMethod(
@@ -485,7 +496,7 @@ class UserPropertiesAgent {
 
 class PerformanceAgent {
   static const MethodChannel _agentPerformanceChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
 
   void reportFullyDrawn() {
     if (Platform.isIOS) {
@@ -515,7 +526,7 @@ class PerformanceAgent {
 
 class MessagingAgent {
   static const MethodChannel _messagingChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
   static const EventChannel _eventChannel =
       EventChannel('flurry_flutter_plugin_event_messaging');
 
@@ -524,7 +535,7 @@ class MessagingAgent {
   static const String notificationCancelled = 'NotificationCancelled';
   static const String tokenRefresh = 'TokenRefresh';
 
-  MessagingListener listener;
+  MessagingListener? listener;
 
   void withMessaging() {
     if (Platform.isIOS) {
@@ -540,22 +551,20 @@ class MessagingAgent {
     this.listener = listener;
   }
 
-  void _onEvent(Object e) {
+  void _onEvent(Object? e) {
     print("Flurry Messaging callback will be triggered");
     if (e is Map) {
-      Map<String, dynamic> event = new Map<String, dynamic>.from(e);
+      Map<String, dynamic> event = Map<String, dynamic>.from(e);
       if (event.containsKey('type')) {
         switch (event['type'] as String) {
           case notificationReceived:
             print("Flurry Messaging received callback triggered");
             if (Platform.isIOS) {
-              if (listener != null) {
-                listener.onNotificationReceived(convertToMessage(event));
-              }
+              listener?.onNotificationReceived(convertToMessage(event));
             } else if (Platform.isAndroid) {
               if (listener != null) {
                 bool willHandle =
-                    listener.onNotificationReceived(convertToMessage(event));
+                    listener!.onNotificationReceived(convertToMessage(event));
                 _messagingChannel.invokeMethod('willHandleMessage',
                     <String, dynamic>{'willHandle': willHandle});
               }
@@ -564,13 +573,11 @@ class MessagingAgent {
           case notificationClicked:
             print("Flurry Messaging clicked callback triggered");
             if (Platform.isIOS) {
-              if (listener != null) {
-                listener.onNotificationClicked(convertToMessage(event));
-              }
+              listener?.onNotificationClicked(convertToMessage(event));
             } else if (Platform.isAndroid) {
               if (listener != null) {
                 bool willHandle =
-                    listener.onNotificationClicked(convertToMessage(event));
+                    listener!.onNotificationClicked(convertToMessage(event));
                 _messagingChannel.invokeMethod('willHandleMessage',
                     <String, dynamic>{'willHandle': willHandle});
               }
@@ -578,15 +585,11 @@ class MessagingAgent {
             break;
           case notificationCancelled:
             print("Flurry Messaging canceled callback triggered");
-            if (listener != null) {
-              listener.onNotificationCancelled(convertToMessage(event));
-            }
+            listener?.onNotificationCancelled(convertToMessage(event));
             break;
           case tokenRefresh:
             print("Flurry Messaging token refreshed callback triggered");
-            if (listener != null) {
-              listener.onTokenRefresh(event['token'] as String);
-            }
+            listener?.onTokenRefresh(event['token'] as String);
             break;
         }
       }
@@ -598,7 +601,7 @@ class MessagingAgent {
     message.title = event['title'] as String;
     message.body = event['body'] as String;
     message.clickAction = event['clickAction'] as String;
-    message.appData = new Map<String, String>.from(event['appData']);
+    message.appData = Map<String, String>.from(event['appData']);
 
     return message;
   }
@@ -610,7 +613,7 @@ class MessagingAgent {
 
 class ConfigAgent {
   static const MethodChannel _configChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
   static const EventChannel _eventChannel =
       EventChannel('flurry_flutter_plugin_event_config');
 
@@ -619,11 +622,8 @@ class ConfigAgent {
   static const String fetchError = 'FetchError';
   static const String activateComplete = 'ActivateComplete';
 
-  List<ConfigListener> _listeners;
+  List<ConfigListener> _listeners = [];
 
-  ConfigAgent() {
-    _listeners = [];
-  }
   void fetchConfig() {
     _configChannel.invokeMethod('fetchConfig');
   }
@@ -642,12 +642,12 @@ class ConfigAgent {
     _listeners.remove(listener);
   }
 
-  void _onEvent(Object e) {
+  void _onEvent(Object? e) {
     print("Flurry Config Listener callback will be triggered");
     if (e is Map) {
-      Map<String, String> event = new Map<String, String>.from(e);
+      Map<String, String> event = Map<String, String>.from(e);
       if (event.containsKey('type')) {
-        String type = event['type'];
+        String? type = event['type'];
         if (type == fetchSuccess) {
           print("onFetchSuccess() triggered");
           _listeners.forEach((element) => element.onFetchSuccess());
@@ -661,8 +661,8 @@ class ConfigAgent {
           } else if (Platform.isAndroid) {
             bool isRetrying = false;
             if (event.containsKey('isRetrying')) {
-              String value = event['isRetrying'];
-              isRetrying = value.toLowerCase() == 'true';
+              String? value = event['isRetrying'];
+              isRetrying = value?.toLowerCase() == 'true';
             }
             _listeners.forEach((element) => element.onFetchError(isRetrying));
           }
@@ -673,8 +673,8 @@ class ConfigAgent {
           } else if (Platform.isAndroid) {
             bool isCache = false;
             if (event.containsKey('isCache')) {
-              String value = event['isCache'];
-              isCache = value.toLowerCase() == 'true';
+              String? value = event['isCache'];
+              isCache = value?.toLowerCase() == 'true';
             }
             _listeners
                 .forEach((element) => element.onActivateComplete(isCache));
@@ -695,15 +695,14 @@ class ConfigAgent {
 }
 
 class ParamBuilderAgent {
-  Map<dynamic, String> _map;
-
-  ParamBuilderAgent() {
-    _map = Map<dynamic, String>();
-  }
+  Map<dynamic, String> _map = <dynamic, String>{};
 
   void putAll(Param param) {
-    for (MapEntry<dynamic, String> e in param.builderAgent._map.entries) {
-      _map.putIfAbsent(e.key, () => e.value);
+    ParamBuilderAgent? builderAgent = param.builderAgent;
+    if (builderAgent != null) {
+      for (MapEntry<dynamic, String> e in builderAgent._map.entries) {
+        _map.putIfAbsent(e.key, () => e.value);
+      }
     }
   }
 
@@ -758,15 +757,11 @@ class ParamBuilderAgent {
 
 class PublisherSegmentationAgent {
   static const MethodChannel _publisherChannel =
-      const MethodChannel('flurry_flutter_plugin');
+      MethodChannel('flurry_flutter_plugin');
   static const EventChannel _eventChannel =
       EventChannel('flurry_flutter_plugin_event_ps');
 
-  List<PublisherSegmentationListener> _listeners;
-
-  PublisherSegmentationAgent() {
-    _listeners = [];
-  }
+  List<PublisherSegmentationListener> _listeners = [];
 
   Future<bool> isFetchFinished() async {
     return await _publisherChannel.invokeMethod('isPublisherDataFetched');
@@ -786,10 +781,10 @@ class PublisherSegmentationAgent {
     _listeners.remove(listener);
   }
 
-  void _onEvent(Object e) {
+  void _onEvent(Object? e) {
     print("Flurry Publisher Segmentation Listener callback will be triggered");
     if (e is Map) {
-      Map<String, String> event = new Map<String, String>.from(e);
+      Map<String, String> event = Map<String, String>.from(e);
       print("Publisher Segmentation onFetched triggered");
       _listeners.forEach((element) => element.onFetched(event));
     }
@@ -802,6 +797,6 @@ class PublisherSegmentationAgent {
   Future<Map<String, String>> getPublisherData() async {
     Map<Object, Object> data =
         await _publisherChannel.invokeMethod('getPublisherData');
-    return new Map<String, String>.from(data);
+    return Map<String, String>.from(data);
   }
 }

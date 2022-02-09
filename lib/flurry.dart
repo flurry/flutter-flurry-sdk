@@ -50,11 +50,10 @@ enum Gender { male, female }
 /// Set of methods that allow developers to capture detailed, aggregate information
 /// regarding the use of their app by end users.
 class Flurry {
-  static const MethodChannel _channel =
-      const MethodChannel('flurry_flutter_plugin');
+  static const MethodChannel _channel = MethodChannel('flurry_flutter_plugin');
 
-  static final FlurryAgent flurryAgent =
-      (Platform.isAndroid || Platform.isIOS) ? new FlurryAgent() : null;
+  static final FlurryAgent? flurryAgent =
+      (Platform.isAndroid || Platform.isIOS) ? FlurryAgent() : null;
   static final Builder builder = Builder();
   static final UserProperties userProperties = UserProperties();
   static final Performance performance = Performance();
@@ -78,7 +77,6 @@ class Flurry {
       case LogLevel.assertion:
         return logLevel.index + 2;
     }
-    return 7;
   }
 
   /// Sets the timeout for expiring a Flurry session.
@@ -86,9 +84,7 @@ class Flurry {
   /// Sets the time the app may be in the background before starting a new session
   /// upon resume. Default is set to 10 seconds in background.
   static void setContinueSessionMillis([int sessionMillis = 10000]) {
-    if (flurryAgent != null) {
-      flurryAgent.setContinueSessionMillis(sessionMillis);
-    }
+    flurryAgent?.setContinueSessionMillis(sessionMillis);
   }
 
   /// Enable automatics collection of crash reports.
@@ -96,9 +92,7 @@ class Flurry {
   /// Catches uncaught exceptions and reports them to Flurry if [crashReporting]
   /// enabled. Default value is set to true.
   static void setCrashReporting([bool crashReporting = true]) {
-    if (flurryAgent != null) {
-      flurryAgent.setCrashReporting(crashReporting);
-    }
+    flurryAgent?.setCrashReporting(crashReporting);
   }
 
   /// Enables opting out of background sessions being counted towards total
@@ -109,31 +103,23 @@ class Flurry {
   /// This API needs to be called before starting session.
   static void setIncludeBackgroundSessionsInMetrics(
       [bool includeBackgroundSessionsInMetrics = true]) {
-    if (flurryAgent != null) {
-      flurryAgent.setIncludeBackgroundSessionsInMetrics(
-          includeBackgroundSessionsInMetrics);
-    }
+    flurryAgent?.setIncludeBackgroundSessionsInMetrics(
+        includeBackgroundSessionsInMetrics);
   }
 
   /// Generates debug logs to console.
   static void setLogEnabled([bool enableLog = true]) {
-    if (flurryAgent != null) {
-      flurryAgent.setLogEnabled(enableLog);
-    }
+    flurryAgent?.setLogEnabled(enableLog);
   }
 
   /// Sets the log level of the debug logs of console.
   static void setLogLevel([LogLevel logLevel = LogLevel.warn]) {
-    if (flurryAgent != null) {
-      flurryAgent.setLogLevel(logLevel);
-    }
+    flurryAgent?.setLogLevel(logLevel);
   }
 
   /// True to enable or false to disable SSL Pinning for Flurry Analytics connection. Defaults to false.
   static void setSslPinningEnabled([bool sslPinningEnabled = false]) {
-    if (flurryAgent != null) {
-      flurryAgent.setSslPinningEnabled(sslPinningEnabled);
-    }
+    flurryAgent?.setSslPinningEnabled(sslPinningEnabled);
   }
 
   /// Sends ccpa compliance data to Flurry.
@@ -143,33 +129,25 @@ class Flurry {
   /// The user's preference must be used to initialize the [Builder.withDataSaleOptOut]
   /// setting in the [Builder] in all future sessions.
   static void setDataSaleOptOut(bool isOptOut) {
-    if (flurryAgent != null) {
-      flurryAgent.setDataSaleOptOut(isOptOut);
-    }
+    flurryAgent?.setDataSaleOptOut(isOptOut);
   }
 
   /// Allows the user to request Flurry to delete their collected data from this
   /// app.
   static void deleteData() {
-    if (flurryAgent != null) {
-      flurryAgent.deleteData();
-    }
+    flurryAgent?.deleteData();
   }
 
   /// Sets user's [age] in years at the time of this session.
   static void setAge(int age) {
-    if (flurryAgent != null) {
-      flurryAgent.setAge(age);
-    }
+    flurryAgent?.setAge(age);
   }
 
   /// Sets user's [gender].
   ///
   /// [gender] can be specified by either Gender.Male or Gender.Female
   static void setGender(Gender gender) {
-    if (flurryAgent != null) {
-      flurryAgent.setGender(gender);
-    }
+    flurryAgent?.setGender(gender);
   }
 
   /// Sets user's preference to allow Flurry to record location via GPS.
@@ -177,9 +155,7 @@ class Flurry {
   /// Location reporting depends on [reportLocation] value for Android whereas
   /// iOS decides based on user permissions of the app.
   static void setReportLocation(bool reportLocation) {
-    if (flurryAgent != null) {
-      flurryAgent.setReportLocation(reportLocation);
-    }
+    flurryAgent?.setReportLocation(reportLocation);
   }
 
   /// Sets session attributions.
@@ -187,16 +163,12 @@ class Flurry {
   /// Specifies session origin named [originName] and [deepLink] for each
   /// session
   static void setSessionOrigin(String originName, String deepLink) {
-    if (flurryAgent != null) {
-      flurryAgent.setSessionOrigin(originName, deepLink);
-    }
+    flurryAgent?.setSessionOrigin(originName, deepLink);
   }
 
   /// Sets a unique Flurry [userId] for this session.
   static void setUserId(String userId) {
-    if (flurryAgent != null) {
-      flurryAgent.setUserId(userId);
-    }
+    flurryAgent?.setUserId(userId);
   }
 
   /// Sets the [versionName] of the app.
@@ -204,9 +176,7 @@ class Flurry {
   /// Use this method to set [versionName] and for iOS, set version name with
   /// [Builder.withAppVersion].
   static void setVersionName(String versionName) {
-    if (flurryAgent != null) {
-      flurryAgent.setVersionName(versionName);
-    }
+    flurryAgent?.setVersionName(versionName);
   }
 
   /// Adds origin attribution.
@@ -214,9 +184,7 @@ class Flurry {
   /// Capture the [originName] and version string of the origin wrapper named
   /// [originVersion].
   static void addOrigin(String originName, String originVersion) {
-    if (flurryAgent != null) {
-      flurryAgent.addOrigin(originName, originVersion);
-    }
+    flurryAgent?.addOrigin(originName, originVersion);
   }
 
   /// Adds origin attribution with parameters.
@@ -226,34 +194,30 @@ class Flurry {
   /// characteristics of an origin.
   static void addOriginWithParameters(String originName, String originVersion,
       Map<String, String> originParameters) {
-    if (flurryAgent != null) {
-      flurryAgent.addOriginWithParameters(
-          originName, originVersion, originParameters);
-    }
+    flurryAgent?.addOriginWithParameters(
+        originName, originVersion, originParameters);
   }
 
   /// Allows you to associate parameters with a session.
   ///
   /// Adds property name called [name] and property value called [value].
   static void addSessionProperty(String name, String value) {
-    if (flurryAgent != null) {
-      flurryAgent.addSessionProperty(name, value);
-    }
+    flurryAgent?.addSessionProperty(name, value);
   }
 
   /// Returns the version of the Flurry SDK.
   static Future<int> getAgentVersion() async {
     if (flurryAgent != null) {
-      int agentVersion = await flurryAgent.getAgentVersion();
+      int agentVersion = await flurryAgent!.getAgentVersion();
       return agentVersion;
     }
     return 0;
   }
 
   /// Returns the release version of the Flurry SDK.
-  static Future<String> getReleaseVersion() async {
+  static Future<String?> getReleaseVersion() async {
     if (flurryAgent != null) {
-      String version = await flurryAgent.getReleaseVersion();
+      String version = await flurryAgent!.getReleaseVersion();
       return version;
     }
 
@@ -261,9 +225,9 @@ class Flurry {
   }
 
   /// Returns the session id of the current session.
-  static Future<String> getSessionId() async {
+  static Future<String?> getSessionId() async {
     if (flurryAgent != null) {
-      String sessionId = await flurryAgent.getSessionId();
+      String sessionId = await flurryAgent!.getSessionId();
       return sessionId;
     }
     return null;
@@ -274,7 +238,7 @@ class Flurry {
   /// Returns the event recording status of the logged event.
   static Future<EventRecordStatus> logEvent(String eventId) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logEvent(eventId);
+      int eventRecordStatus = await flurryAgent!.logEvent(eventId);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -288,7 +252,7 @@ class Flurry {
   static Future<EventRecordStatus> logTimedEvent(
       String eventId, bool timed) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logTimedEvent(eventId, timed);
+      int eventRecordStatus = await flurryAgent!.logTimedEvent(eventId, timed);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -304,7 +268,7 @@ class Flurry {
       String eventId, Map<String, String> parameters) async {
     if (flurryAgent != null) {
       int eventRecordStatus =
-          await flurryAgent.logEventWithParameters(eventId, parameters);
+          await flurryAgent!.logEventWithParameters(eventId, parameters);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -319,8 +283,8 @@ class Flurry {
   static Future<EventRecordStatus> logTimedEventWithParameters(
       String eventId, Map<String, String> parameters, bool timed) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logTimedEventWithParameters(
-          eventId, parameters, timed);
+      int eventRecordStatus = await flurryAgent!
+          .logTimedEventWithParameters(eventId, parameters, timed);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -331,9 +295,7 @@ class Flurry {
   ///
   /// Ignores the action if event named [eventId] is already terminated.
   static void endTimedEvent(String eventId) {
-    if (flurryAgent != null) {
-      flurryAgent.endTimedEvent(eventId);
-    }
+    flurryAgent?.endTimedEvent(eventId);
   }
 
   /// Ends a timed event and updated parameters.
@@ -344,9 +306,7 @@ class Flurry {
   /// the event was initiated.
   static void endTimedEventWithParameters(
       String eventId, Map<String, String> parameters) {
-    if (flurryAgent != null) {
-      flurryAgent.endTimedEventWithParameters(eventId, parameters);
-    }
+    flurryAgent?.endTimedEventWithParameters(eventId, parameters);
   }
 
   /// Records an app exception.
@@ -355,9 +315,7 @@ class Flurry {
   /// [errorId], and error message in [message]. Specifies exception attributes
   /// like exception name and exception reason in [errorClass].
   static void onError(String errorId, String message, String errorClass) {
-    if (flurryAgent != null) {
-      flurryAgent.onError(errorId, message, errorClass);
-    }
+    flurryAgent?.onError(errorId, message, errorClass);
   }
 
   /// Records an app exception with parameters.
@@ -368,10 +326,8 @@ class Flurry {
   /// parameters associated with the exception.
   static void onErrorWithParameters(String errorId, String message,
       String errorClass, Map<String, String> parameters) {
-    if (flurryAgent != null) {
-      flurryAgent.onErrorWithParameters(
-          errorId, message, errorClass, parameters);
-    }
+    flurryAgent?.onErrorWithParameters(
+        errorId, message, errorClass, parameters);
   }
 
   /// Logs the breadcrumb.
@@ -380,9 +336,7 @@ class Flurry {
   /// breadcrumbs are included in crash and error logs. Breadcrumbs are reset
   /// at every application launch.
   static void logBreadcrumb(String crashBreadcrumb) {
-    if (flurryAgent != null) {
-      flurryAgent.logBreadcrumb(crashBreadcrumb);
-    }
+    flurryAgent?.logBreadcrumb(crashBreadcrumb);
   }
 
   /// Logs a payment.
@@ -399,7 +353,7 @@ class Flurry {
       String transactionId,
       Map<String, String> parameters) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logPayment(productName,
+      int eventRecordStatus = await flurryAgent!.logPayment(productName,
           productId, quantity, price, currency, transactionId, parameters);
       return EventRecordStatus.values[eventRecordStatus];
     }
@@ -415,7 +369,7 @@ class Flurry {
   static Future<EventRecordStatus> logStandardEvent(
       FlurryEvent id, Param param) async {
     if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent.logStandardEvent(id, param);
+      int eventRecordStatus = await flurryAgent!.logStandardEvent(id, param);
       return EventRecordStatus.values[eventRecordStatus];
     }
     return EventRecordStatus.eventFailed;
@@ -425,9 +379,7 @@ class Flurry {
   ///
   /// This method needs to be called before any transaction is finalized.
   static void setIAPReportingEnabled(bool enableIAP) {
-    if (flurryAgent != null) {
-      flurryAgent.setIAPReportingEnabled(enableIAP);
-    }
+    flurryAgent?.setIAPReportingEnabled(enableIAP);
   }
 
   /// Sets the iOS conversion value sent to Apple through SKAdNetwork.
@@ -435,9 +387,7 @@ class Flurry {
   /// [conversionValue] is an integer value between 0-63. The conversion values
   /// meaning is determined by the developer.
   static void updateConversionValue(int conversionValue) {
-    if (flurryAgent != null) {
-      flurryAgent.updateConversionValue(conversionValue);
-    }
+    flurryAgent?.updateConversionValue(conversionValue);
   }
 
   /// Allows Flurry to set the SKAdNetwork conversion value for you.
@@ -449,9 +399,7 @@ class Flurry {
   /// completed the post install [flurryEvent].
   /// Valid [flurryEvent] is NoEvent, Registration, LogIn, Subscription, or InAppPurchase.
   static void updateConversionValueWithEvent(SKAdNetworkEvent flurryEvent) {
-    if (flurryAgent != null) {
-      flurryAgent.updateConversionValueWithEvent(flurryEvent);
-    }
+    flurryAgent?.updateConversionValueWithEvent(flurryEvent);
   }
 
   /// opens privacy dashboard in Safari/Chrome CustomTab.
@@ -460,21 +408,19 @@ class Flurry {
   /// been included in the gradle and device support it as well. otherwise will
   /// open it in the external browser.
   static void openPrivacyDashboard() {
-    if (flurryAgent != null) {
-      flurryAgent.openPrivacyDashboard();
-    }
+    flurryAgent?.openPrivacyDashboard();
   }
 }
 
 class Builder {
-  BuilderAgent builderAgent;
-  MessagingAgent messagingAgent;
+  BuilderAgent? builderAgent;
+  MessagingAgent? messagingAgent;
 
   Builder() {
     if (Platform.isIOS || Platform.isAndroid) {
       // calls initializeBuilder
-      builderAgent = new BuilderAgent();
-      messagingAgent = new MessagingAgent();
+      builderAgent = BuilderAgent();
+      messagingAgent = MessagingAgent();
     }
   }
 
@@ -483,7 +429,7 @@ class Builder {
       Map<String, dynamic> arguments = <String, dynamic>{};
       arguments.putIfAbsent("androidAPIKey", () => androidAPIKey);
       arguments.putIfAbsent("iosAPIKey", () => iosAPIKey);
-      builderAgent.build(arguments);
+      builderAgent!.build(arguments);
     }
   }
 
@@ -493,9 +439,7 @@ class Builder {
   /// Analytics data. Default is set to "1.0". Maximum of 605 versions allowed
   /// per app.
   Builder withAppVersion([String appVersion = "1.0"]) {
-    if (builderAgent != null) {
-      builderAgent.withAppVersion(appVersion);
-    }
+    builderAgent?.withAppVersion(appVersion);
     return this;
   }
 
@@ -504,9 +448,7 @@ class Builder {
   /// Sets the time the app may be in the background before starting a new session
   /// upon resume. Default is set to 10 seconds in background.
   Builder withContinueSessionMillis([int sessionMillis = 10000]) {
-    if (builderAgent != null) {
-      builderAgent.withContinueSessionMillis(sessionMillis);
-    }
+    builderAgent?.withContinueSessionMillis(sessionMillis);
     return this;
   }
 
@@ -515,9 +457,7 @@ class Builder {
   /// Catches uncaught exceptions and reports them to Flurry if [crashReporting]
   /// enabled. Default value is set to true.
   Builder withCrashReporting([bool crashReporting = true]) {
-    if (builderAgent != null) {
-      builderAgent.withCrashReporting(crashReporting);
-    }
+    builderAgent?.withCrashReporting(crashReporting);
     return this;
   }
 
@@ -526,9 +466,7 @@ class Builder {
   /// Sends CCPA compliance data to Flurry on the user's choice to opt out or
   /// opt in to data sale to third parties. By default, [isOptOut] is set to false.
   Builder withDataSaleOptOut([bool isOptOut = false]) {
-    if (builderAgent != null) {
-      builderAgent.withDataSaleOptOut(isOptOut);
-    }
+    builderAgent?.withDataSaleOptOut(isOptOut);
     return this;
   }
 
@@ -540,42 +478,32 @@ class Builder {
   /// This API needs to be called before starting session.
   Builder withIncludeBackgroundSessionsInMetrics(
       [bool includeBackgroundSessionsInMetrics = true]) {
-    if (builderAgent != null) {
-      builderAgent.withIncludeBackgroundSessionsInMetrics(
-          includeBackgroundSessionsInMetrics);
-    }
+    builderAgent?.withIncludeBackgroundSessionsInMetrics(
+        includeBackgroundSessionsInMetrics);
     return this;
   }
 
   /// Generates debug logs to console.
   Builder withLogEnabled([bool enableLog = true]) {
-    if (builderAgent != null) {
-      builderAgent.withLogEnabled(enableLog);
-    }
+    builderAgent?.withLogEnabled(enableLog);
     return this;
   }
 
   /// Sets the log level of the debug logs of console.
   Builder withLogLevel([LogLevel logLevel = LogLevel.warn]) {
-    if (builderAgent != null) {
-      builderAgent.withLogLevel(logLevel);
-    }
+    builderAgent?.withLogLevel(logLevel);
     return this;
   }
 
   /// Sets flag for performance metrics reporting.
   Builder withPerformanceMetrics([int performanceMetrics = Performance.all]) {
-    if (builderAgent != null) {
-      builderAgent.withPerformanceMetrics(performanceMetrics);
-    }
+    builderAgent?.withPerformanceMetrics(performanceMetrics);
     return this;
   }
 
   /// True to enable or false to disable SSL Pinning for Flurry Analytics connection. Defaults to false.
   Builder withSslPinningEnabled([bool sslPinningEnabled = false]) {
-    if (builderAgent != null) {
-      builderAgent.withSslPinningEnabled(sslPinningEnabled);
-    }
+    builderAgent?.withSslPinningEnabled(sslPinningEnabled);
     return this;
   }
 
@@ -587,16 +515,18 @@ class Builder {
   /// 2) Handles device token.
   /// 3) Listens for callbacks from UIApplication and UNUserNotificationCenter.
   Builder withMessaging(
-      [bool enableMessaging = true, MessagingListener listener]) {
+      [bool enableMessaging = true, MessagingListener? listener]) {
     if (!enableMessaging) {
       return this;
     }
 
     if (messagingAgent != null) {
-      messagingAgent.setListener(listener);
+      if (listener != null) {
+        messagingAgent!.setListener(listener);
+      }
 
       if (Platform.isIOS) {
-        messagingAgent.withMessaging();
+        messagingAgent!.withMessaging();
       } else {
         print(
             "To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.");
@@ -631,11 +561,11 @@ class UserProperties {
   static const String propertySubscriber = "Flurry.Subscriber";
 
   // init static Flurry agent UserProperties object.
-  static UserPropertiesAgent userPropertiesAgent;
+  static UserPropertiesAgent? userPropertiesAgent;
 
   UserProperties() {
     if (Platform.isIOS || Platform.isAndroid) {
-      userPropertiesAgent = new UserPropertiesAgent();
+      userPropertiesAgent = UserPropertiesAgent();
     }
   }
 
@@ -644,18 +574,14 @@ class UserProperties {
   /// Null [propertyValue] clears the property state. [propertyValue] allows
   /// in a single string value.
   void setValue(String propertyName, String propertyValue) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.setUserPropertyValue(propertyName, propertyValue);
-    }
+    userPropertiesAgent?.setUserPropertyValue(propertyName, propertyValue);
   }
 
   /// Exactly set, or replace if any previously exists, any state for the property.
   ///
   /// Empty list or null [propertyValues] clears the property state.
   void setValues(String propertyName, List<String> propertyValues) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.setUserPropertyValues(propertyName, propertyValues);
-    }
+    userPropertiesAgent?.setUserPropertyValues(propertyName, propertyValues);
   }
 
   /// Extends or creates property named [propertyName].
@@ -664,9 +590,7 @@ class UserProperties {
   /// if does not already exists. Adding [propertyValue] already included in the
   /// state has no effect and does not error.
   void addValue(String propertyName, String propertyValue) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.addUserPropertyValue(propertyName, propertyValue);
-    }
+    userPropertiesAgent?.addUserPropertyValue(propertyName, propertyValue);
   }
 
   /// Extends or creates property named [propertyName].
@@ -675,9 +599,7 @@ class UserProperties {
   /// if does not already exists. Adding [propertyValues] already included in
   /// the state has no effect and does not error.
   void addValues(String propertyName, List<String> propertyValues) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.addUserPropertyValues(propertyName, propertyValues);
-    }
+    userPropertiesAgent?.addUserPropertyValues(propertyName, propertyValues);
   }
 
   /// Reduces property named [propertyName].
@@ -685,9 +607,7 @@ class UserProperties {
   /// Removing [propertyValue] not already included in the state has no effect
   /// and does not error
   void removeValue(String propertyName, String propertyValue) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.removeUserPropertyValue(propertyName, propertyValue);
-    }
+    userPropertiesAgent?.removeUserPropertyValue(propertyName, propertyValue);
   }
 
   /// Reduce property named [propertyName].
@@ -695,10 +615,7 @@ class UserProperties {
   /// Removing [propertyValues] not already included in the state has no effect
   /// and does not error
   void removeValues(String propertyName, List<String> propertyValues) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.removeUserPropertyValues(
-          propertyName, propertyValues);
-    }
+    userPropertiesAgent?.removeUserPropertyValues(propertyName, propertyValues);
   }
 
   /// Removes all property values for the property named [propertyName].
@@ -706,9 +623,7 @@ class UserProperties {
   /// Exactly set, or replace if any previously exists, any state for the
   /// [propertyName] to be empty.
   void remove(String propertyName) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.removeUserProperty(propertyName);
-    }
+    userPropertiesAgent?.removeUserProperty(propertyName);
   }
 
   /// Exactly set, or replace if any previously exists, any state for the
@@ -716,9 +631,7 @@ class UserProperties {
   ///
   /// Implies that value is boolean and should only be flagged and cleared.
   void flag(String propertyName) {
-    if (userPropertiesAgent != null) {
-      userPropertiesAgent.flagUserProperty(propertyName);
-    }
+    userPropertiesAgent?.flagUserProperty(propertyName);
   }
 }
 
@@ -729,11 +642,11 @@ class Performance {
   static const int all = 1 | 2;
 
   // init static Flurry agent PerformanceMetrics object.
-  static PerformanceAgent performanceAgent;
+  static PerformanceAgent? performanceAgent;
 
   Performance() {
     if (Platform.isAndroid || Platform.isIOS) {
-      performanceAgent = new PerformanceAgent();
+      performanceAgent = PerformanceAgent();
     }
   }
 
@@ -745,9 +658,7 @@ class Performance {
   /// android.app.Activity#reportFullyDrawn
   /// [](https://android.app.Activity#reportFullyDrawn)
   void reportFullyDrawn() {
-    if (performanceAgent != null) {
-      performanceAgent.reportFullyDrawn();
-    }
+    performanceAgent?.reportFullyDrawn();
   }
 
   /// Provides a Resource logger.
@@ -765,26 +676,22 @@ class Performance {
   ///   Flurry.Performance.LogResourceLogger("My ID");
   /// ```
   void startResourceLogger() {
-    if (performanceAgent != null) {
-      performanceAgent.startResourceLogger();
-    }
+    performanceAgent?.startResourceLogger();
   }
 
   /// Logs Flurry Resources Consuming events with group event id, [id].
   void logResourceLogger(String id) {
-    if (performanceAgent != null) {
-      performanceAgent.logResourceLogger(id);
-    }
+    performanceAgent?.logResourceLogger(id);
   }
 }
 
 /// Message is a convenience class to access all the properties set
 /// on the Flurry message.
 class Message {
-  String title;
-  String body;
-  String clickAction;
-  Map<String, String> appData;
+  String? title;
+  String? body;
+  String? clickAction;
+  Map<String, String>? appData;
 }
 
 /// Provides all available delegates for receiving callbacks related to
@@ -870,11 +777,11 @@ mixin ConfigListener {
 /// have more control over the configuration service if it is necessary.
 
 class Config {
-  static ConfigAgent configAgent;
+  static ConfigAgent? configAgent;
 
   Config() {
     if (Platform.isAndroid || Platform.isIOS) {
-      configAgent = new ConfigAgent();
+      configAgent = ConfigAgent();
     }
   }
 
@@ -888,9 +795,7 @@ class Config {
   ///
   /// **It is important to know that fetching does not activate a new config.**
   void fetchConfig() {
-    if (configAgent != null) {
-      configAgent.fetchConfig();
-    }
+    configAgent?.fetchConfig();
   }
 
   /// Aggressively activates the latest config if it has not been activated.
@@ -901,9 +806,7 @@ class Config {
   /// When an activation occurs, anyone listening to the [ConfigListener]
   /// will be notified of the activation.
   void activateConfig() {
-    if (configAgent != null) {
-      configAgent.activateConfig();
-    }
+    configAgent?.activateConfig();
   }
 
   /// Registers an observer.
@@ -911,16 +814,12 @@ class Config {
   /// An object may register as an observer in order to be notified of events
   /// within the config service.
   void registerListener(ConfigListener listener) {
-    if (configAgent != null) {
-      configAgent.registerListener(listener);
-    }
+    configAgent?.registerListener(listener);
   }
 
   /// Unregisters an observer.
   void unregisterListener(ConfigListener listener) {
-    if (configAgent != null) {
-      configAgent.unregisterListener(listener);
-    }
+    configAgent?.unregisterListener(listener);
   }
 
   /// Gets the string value for the given [key].
@@ -931,10 +830,10 @@ class Config {
   /// [defaultValue] will be chosen.
   Future<String> getConfigString(String key, String defaultValue) async {
     if (configAgent != null) {
-      String value = await configAgent.getConfigString(key, defaultValue);
+      String value = await configAgent!.getConfigString(key, defaultValue);
       return value;
     }
-    return null;
+    return defaultValue;
   }
 }
 
@@ -1358,92 +1257,84 @@ enum FlurryEvent {
 
 /// [EventParam] contains all Flurry defined parameter keys to log standard event.
 class EventParam {
-  static final StringParam adType =
-      new StringParam(StandardParam.eventParamAdType);
-  static final StringParam levelName =
-      new StringParam(StandardParam.eventParamLevelName);
-  static final IntegerParam levelNumber =
-      new IntegerParam(StandardParam.eventParamLevelNumber);
-  static final StringParam contentName =
-      new StringParam(StandardParam.eventParamContentName);
-  static final StringParam contentType =
-      new StringParam(StandardParam.eventParamContentType);
-  static final StringParam contentId =
-      new StringParam(StandardParam.eventParamContentId);
-  static final StringParam creditName =
-      new StringParam(StandardParam.eventParamCreditName);
-  static final StringParam creditType =
-      new StringParam(StandardParam.eventParamCreditType);
-  static final StringParam creditId =
-      new StringParam(StandardParam.eventParamCreditId);
-  static final BooleanParam isCurrencySoft =
-      new BooleanParam(StandardParam.eventParamIsCurrencySoft);
-  static final StringParam currencyType =
-      new StringParam(StandardParam.eventParamCurrencyType);
-  static final StringParam paymentType =
-      new StringParam(StandardParam.eventParamPaymentType);
-  static final StringParam itemName =
-      new StringParam(StandardParam.eventParamItemName);
-  static final StringParam itemType =
-      new StringParam(StandardParam.eventParamItemType);
-  static final StringParam itemId =
-      new StringParam(StandardParam.eventParamItemId);
-  static final IntegerParam itemCount =
-      new IntegerParam(StandardParam.eventParamItemCount);
-  static final StringParam itemCategory =
-      new StringParam(StandardParam.eventParamItemCategory);
-  static final StringParam itemListType =
-      new StringParam(StandardParam.eventParamItemListType);
-  static final DoubleParam price =
-      new DoubleParam(StandardParam.eventParamPrice);
-  static final DoubleParam totalAmount =
-      new DoubleParam(StandardParam.eventParamTotalAmount);
-  static final StringParam achievementId =
-      new StringParam(StandardParam.eventParamAchievementId);
-  static final IntegerParam score =
-      new IntegerParam(StandardParam.eventParamScore);
-  static final StringParam rating =
-      new StringParam(StandardParam.eventParamRating);
-  static final StringParam transactionId =
-      new StringParam(StandardParam.eventParamTransactionId);
-  static final BooleanParam success =
-      new BooleanParam(StandardParam.eventParamSuccess);
-  static final BooleanParam isAnnualSubscription =
-      new BooleanParam(StandardParam.eventParamIsAnnualSubscription);
-  static final StringParam subscriptionCountry =
-      new StringParam(StandardParam.eventParamSubscriptionCountry);
-  static final IntegerParam trialDays =
-      new IntegerParam(StandardParam.eventParamTrialDays);
-  static final StringParam predictedLTV =
-      new StringParam(StandardParam.eventParamPredictedLTV);
-  static final StringParam groupName =
-      new StringParam(StandardParam.eventParamGroupName);
-  static final StringParam tutorialName =
-      new StringParam(StandardParam.eventParamTutorialName);
-  static final IntegerParam stepNumber =
-      new IntegerParam(StandardParam.eventParamStepNumber);
-  static final StringParam userId =
-      new StringParam(StandardParam.eventParamUserId);
-  static final StringParam method =
-      new StringParam(StandardParam.eventParamMethod);
-  static final StringParam query =
-      new StringParam(StandardParam.eventParamQuery);
-  static final StringParam searchType =
-      new StringParam(StandardParam.eventParamSearchType);
-  static final StringParam socialContentName =
-      new StringParam(StandardParam.eventParamSocialContentName);
-  static final StringParam socialContentId =
-      new StringParam(StandardParam.eventParamSocialContentId);
-  static final StringParam likeType =
-      new StringParam(StandardParam.eventParamLikeType);
-  static final StringParam mediaName =
-      new StringParam(StandardParam.eventParamMediaName);
-  static final StringParam mediaType =
-      new StringParam(StandardParam.eventParamMediaType);
-  static final StringParam mediaId =
-      new StringParam(StandardParam.eventParamMediaId);
-  static final IntegerParam duration =
-      new IntegerParam(StandardParam.eventParamDuration);
+  static const StringParam adType = StringParam(StandardParam.eventParamAdType);
+  static const StringParam levelName =
+      StringParam(StandardParam.eventParamLevelName);
+  static const IntegerParam levelNumber =
+      IntegerParam(StandardParam.eventParamLevelNumber);
+  static const StringParam contentName =
+      StringParam(StandardParam.eventParamContentName);
+  static const StringParam contentType =
+      StringParam(StandardParam.eventParamContentType);
+  static const StringParam contentId =
+      StringParam(StandardParam.eventParamContentId);
+  static const StringParam creditName =
+      StringParam(StandardParam.eventParamCreditName);
+  static const StringParam creditType =
+      StringParam(StandardParam.eventParamCreditType);
+  static const StringParam creditId =
+      StringParam(StandardParam.eventParamCreditId);
+  static const BooleanParam isCurrencySoft =
+      BooleanParam(StandardParam.eventParamIsCurrencySoft);
+  static const StringParam currencyType =
+      StringParam(StandardParam.eventParamCurrencyType);
+  static const StringParam paymentType =
+      StringParam(StandardParam.eventParamPaymentType);
+  static const StringParam itemName =
+      StringParam(StandardParam.eventParamItemName);
+  static const StringParam itemType =
+      StringParam(StandardParam.eventParamItemType);
+  static const StringParam itemId = StringParam(StandardParam.eventParamItemId);
+  static const IntegerParam itemCount =
+      IntegerParam(StandardParam.eventParamItemCount);
+  static const StringParam itemCategory =
+      StringParam(StandardParam.eventParamItemCategory);
+  static const StringParam itemListType =
+      StringParam(StandardParam.eventParamItemListType);
+  static const DoubleParam price = DoubleParam(StandardParam.eventParamPrice);
+  static const DoubleParam totalAmount =
+      DoubleParam(StandardParam.eventParamTotalAmount);
+  static const StringParam achievementId =
+      StringParam(StandardParam.eventParamAchievementId);
+  static const IntegerParam score = IntegerParam(StandardParam.eventParamScore);
+  static const StringParam rating = StringParam(StandardParam.eventParamRating);
+  static const StringParam transactionId =
+      StringParam(StandardParam.eventParamTransactionId);
+  static const BooleanParam success =
+      BooleanParam(StandardParam.eventParamSuccess);
+  static const BooleanParam isAnnualSubscription =
+      BooleanParam(StandardParam.eventParamIsAnnualSubscription);
+  static const StringParam subscriptionCountry =
+      StringParam(StandardParam.eventParamSubscriptionCountry);
+  static const IntegerParam trialDays =
+      IntegerParam(StandardParam.eventParamTrialDays);
+  static const StringParam predictedLTV =
+      StringParam(StandardParam.eventParamPredictedLTV);
+  static const StringParam groupName =
+      StringParam(StandardParam.eventParamGroupName);
+  static const StringParam tutorialName =
+      StringParam(StandardParam.eventParamTutorialName);
+  static const IntegerParam stepNumber =
+      IntegerParam(StandardParam.eventParamStepNumber);
+  static const StringParam userId = StringParam(StandardParam.eventParamUserId);
+  static const StringParam method = StringParam(StandardParam.eventParamMethod);
+  static const StringParam query = StringParam(StandardParam.eventParamQuery);
+  static const StringParam searchType =
+      StringParam(StandardParam.eventParamSearchType);
+  static const StringParam socialContentName =
+      StringParam(StandardParam.eventParamSocialContentName);
+  static const StringParam socialContentId =
+      StringParam(StandardParam.eventParamSocialContentId);
+  static const StringParam likeType =
+      StringParam(StandardParam.eventParamLikeType);
+  static const StringParam mediaName =
+      StringParam(StandardParam.eventParamMediaName);
+  static const StringParam mediaType =
+      StringParam(StandardParam.eventParamMediaType);
+  static const StringParam mediaId =
+      StringParam(StandardParam.eventParamMediaId);
+  static const IntegerParam duration =
+      IntegerParam(StandardParam.eventParamDuration);
 }
 
 enum StandardParam {
@@ -1508,28 +1399,23 @@ enum StandardParam {
 /// standardized parameters, you will need to use the APIs specified in [Param]
 /// interface to map them correctly.
 class Param {
-  ParamBuilderAgent builderAgent;
+  ParamBuilderAgent? builderAgent;
 
   Param() {
     if (Platform.isAndroid || Platform.isIOS) {
-      builderAgent = new ParamBuilderAgent();
+      builderAgent = ParamBuilderAgent();
     }
   }
 
   /// Gets the parameters map object for logging the standard events.
-  Map<dynamic, String> getParameters() {
-    if (builderAgent != null) {
-      return builderAgent.getParameters();
-    }
-    return null;
+  Map<dynamic, String>? getParameters() {
+    return builderAgent?.getParameters();
   }
 
   /// Sets a standard event Param.
   /// Returns Param object after this procedure after parsing [param].
   Param putAll(Param param) {
-    if (builderAgent != null) {
-      builderAgent.putAll(param);
-    }
+    builderAgent?.putAll(param);
     return this;
   }
 
@@ -1537,9 +1423,7 @@ class Param {
   ///
   /// Returns the Param object after setting Flurry defined param [key].
   Param putStringParam(StringParam key, String value) {
-    if (builderAgent != null) {
-      builderAgent.putStringParam(key, value);
-    }
+    builderAgent?.putStringParam(key, value);
     return this;
   }
 
@@ -1547,9 +1431,7 @@ class Param {
   ///
   /// Returns the Param object after setting the given value for the key.
   Param putString(String key, String value) {
-    if (builderAgent != null) {
-      builderAgent.putString(key, value);
-    }
+    builderAgent?.putString(key, value);
     return this;
   }
 
@@ -1558,9 +1440,7 @@ class Param {
   /// Returns Param object after setting integer [value] for a Flurry Defined
   /// IntegerParam [key].
   Param putIntegerParam(IntegerParam key, int value) {
-    if (builderAgent != null) {
-      builderAgent.putIntegerParam(key, value);
-    }
+    builderAgent?.putIntegerParam(key, value);
     return this;
   }
 
@@ -1568,9 +1448,7 @@ class Param {
   ///
   /// Returns Param object after this procedure.
   Param putInteger(String key, int value) {
-    if (builderAgent != null) {
-      builderAgent.putInteger(key, value);
-    }
+    builderAgent?.putInteger(key, value);
     return this;
   }
 
@@ -1579,9 +1457,7 @@ class Param {
   /// Returns the Param object after setting double [value] for the Flurry
   /// Defined DoubleParam [key]
   Param putDoubleParam(DoubleParam key, double value) {
-    if (builderAgent != null) {
-      builderAgent.putDoubleParam(key, value);
-    }
+    builderAgent?.putDoubleParam(key, value);
     return this;
   }
 
@@ -1589,9 +1465,7 @@ class Param {
   ///
   /// Returns Param object after this procedure.
   Param putDouble(String key, double value) {
-    if (builderAgent != null) {
-      builderAgent.putDouble(key, value);
-    }
+    builderAgent?.putDouble(key, value);
     return this;
   }
 
@@ -1600,9 +1474,7 @@ class Param {
   /// Returns the Param object after setting boolean [value] for the Flurry
   /// Defined BooleanParam [key].
   Param putBooleanParam(BooleanParam key, bool value) {
-    if (builderAgent != null) {
-      builderAgent.putBooleanParam(key, value);
-    }
+    builderAgent?.putBooleanParam(key, value);
     return this;
   }
 
@@ -1610,9 +1482,7 @@ class Param {
   ///
   /// Returns Param object after this procedure.
   Param putBoolen(String key, bool value) {
-    if (builderAgent != null) {
-      builderAgent.putBoolen(key, value);
-    }
+    builderAgent?.putBoolen(key, value);
     return this;
   }
 
@@ -1620,9 +1490,7 @@ class Param {
   ///
   /// Returns Param object after this procedure.
   Param removeParam(ParamBase key) {
-    if (builderAgent != null) {
-      builderAgent.removeParam(key);
-    }
+    builderAgent?.removeParam(key);
     return this;
   }
 
@@ -1630,9 +1498,7 @@ class Param {
   ///
   /// Returns Param object after this procedure.
   Param remove(String key) {
-    if (builderAgent != null) {
-      builderAgent.remove(key);
-    }
+    builderAgent?.remove(key);
     return this;
   }
 
@@ -1640,9 +1506,7 @@ class Param {
   ///
   /// Returns Param object after this procedure.
   Param clear() {
-    if (builderAgent != null) {
-      builderAgent.clear();
-    }
+    builderAgent?.clear();
     return this;
   }
 }
@@ -1650,7 +1514,8 @@ class Param {
 /// [ParamBase] serves as a generic class for the following types of
 /// param-key classes.
 abstract class ParamBase {
-  StandardParam id;
+  final StandardParam id;
+  const ParamBase(this.id);
 }
 
 /// [StringParam] is the class of Flurry-defined param keys which can be only
@@ -1658,19 +1523,15 @@ abstract class ParamBase {
 ///
 /// It is a subclass of [ParamBase].
 class StringParam extends ParamBase {
-  StringParam(StandardParam paramId) {
-    id = paramId;
-  }
+  const StringParam(StandardParam id) : super(id);
 }
 
 /// [IntegerParam] is the class of Flurry-defined param keys which can be only
 /// mapped with integer value.
 ///
 /// It is a subclass of [ParamBase].
-class IntegerParam with ParamBase {
-  IntegerParam(StandardParam paramId) {
-    id = paramId;
-  }
+class IntegerParam extends ParamBase {
+  const IntegerParam(StandardParam id) : super(id);
 }
 
 /// [DoubleParam] is the class of Flurry-defined param keys which can be only
@@ -1678,9 +1539,7 @@ class IntegerParam with ParamBase {
 ///
 /// It is a subclass of [ParamBase].
 class DoubleParam extends ParamBase {
-  DoubleParam(StandardParam paramId) {
-    id = paramId;
-  }
+  const DoubleParam(StandardParam id) : super(id);
 }
 
 /// [BooleanParam] is the class of Flurry-defined param keys which can be only
@@ -1688,9 +1547,7 @@ class DoubleParam extends ParamBase {
 ///
 /// It is a subclass of [ParamBase].
 class BooleanParam extends ParamBase {
-  BooleanParam(StandardParam paramId) {
-    id = paramId;
-  }
+  const BooleanParam(StandardParam id) : super(id);
 }
 
 /// Provides listener method for receiving callbacks related to publisher data
@@ -1704,7 +1561,7 @@ mixin PublisherSegmentationListener {
 }
 
 class PublisherSegmentation {
-  static PublisherSegmentationAgent publisherSegmentationAgent;
+  static PublisherSegmentationAgent? publisherSegmentationAgent;
 
   PublisherSegmentation() {
     if (Platform.isIOS || Platform.isAndroid) {
@@ -1715,7 +1572,7 @@ class PublisherSegmentation {
   /// Indicates whether the publisher data is fetched and ready to use.
   Future<bool> isFetchFinished() async {
     if (publisherSegmentationAgent != null) {
-      return await publisherSegmentationAgent.isFetchFinished();
+      return await publisherSegmentationAgent!.isFetchFinished();
     }
     return false;
   }
@@ -1725,32 +1582,26 @@ class PublisherSegmentation {
   /// Server has a throttle where when the user calls [fetch] Config many times in
   /// a row, it will basically do a no-op.
   void fetch() {
-    if (publisherSegmentationAgent != null) {
-      publisherSegmentationAgent.fetch();
-    }
+    publisherSegmentationAgent?.fetch();
   }
 
   /// Registers as an observer
   void registerListener(PublisherSegmentationListener listener) {
-    if (publisherSegmentationAgent != null) {
-      publisherSegmentationAgent.registerListener(listener);
-    }
+    publisherSegmentationAgent?.registerListener(listener);
   }
 
   /// Unregisters an observer
   void unregisterListener(PublisherSegmentationListener listener) {
-    if (publisherSegmentationAgent != null) {
-      publisherSegmentationAgent.unregisterListener(listener);
-    }
+    publisherSegmentationAgent?.unregisterListener(listener);
   }
 
   /// Retrieves the fetched publisher data
   ///
   /// Returns a map of key-value paired configuration for publisher segmentation
   /// data. If not yet fetched, it will return the cached segments data.
-  Future<Map<String, String>> getPublisherData() async {
+  Future<Map<String, String>?> getPublisherData() async {
     if (publisherSegmentationAgent != null) {
-      return await publisherSegmentationAgent.getPublisherData();
+      return await publisherSegmentationAgent!.getPublisherData();
     }
     return null;
   }

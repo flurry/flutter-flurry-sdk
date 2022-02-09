@@ -17,7 +17,7 @@ import 'dart:async';
 
 import 'package:flutter_flurry_sdk/flurry.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
@@ -67,7 +67,7 @@ class FlurryExample {
         .withCrashReporting(true)
         .withLogEnabled(true)
         .withLogLevel(LogLevel.debug)
-        .withMessaging(true, new MyMessagingListener())
+        .withMessaging(true, MyMessagingListener())
         .build(
             androidAPIKey: FLURRY_ANDROID_API_KEY,
                 iosAPIKey: FLURRY_IOS_API_KEY);
@@ -76,13 +76,13 @@ class FlurryExample {
   static void example() async {
     // Example to get Flurry versions.
     int agentVersion = await Flurry.getAgentVersion();
-    print("Agent Version: $agentVersion");
+    print('Agent Version: $agentVersion');
 
-    String releaseVersion = await Flurry.getReleaseVersion();
-    print("Release Version: $releaseVersion");
+    String? releaseVersion = await Flurry.getReleaseVersion();
+    print('Release Version: $releaseVersion');
 
-    String sessionId = await Flurry.getSessionId();
-    print("Session Id: $sessionId");
+    String? sessionId = await Flurry.getSessionId();
+    print('Session Id: $sessionId');
 
     // Set Flurry preferences.
     Flurry.setLogEnabled(true);
@@ -98,7 +98,7 @@ class FlurryExample {
 
     // Log Flurry events.
     Flurry.logEvent('Flutter Event');
-    Map<String, String> map = Map<String, String>();
+    var map = <String, String>{};
     for (int i = 0; i < 6; i++) {
       map.putIfAbsent('$i', () => '$i');
     }
@@ -106,21 +106,21 @@ class FlurryExample {
     Flurry.endTimedEvent('Flutter Timed Event');
 
     // Log Flurry standard events.
-    Param paramBuilder = new Param()
+    var paramBuilder = Param()
         .putDoubleParam(EventParam.totalAmount, 34.99)
         .putBooleanParam(EventParam.success, true)
-        .putStringParam(EventParam.itemName, "book 1")
-        .putString("note", "This is an awesome book to purchase !!!");
+        .putStringParam(EventParam.itemName, 'book 1')
+        .putString('note', 'This is an awesome book to purchase !!!');
     Flurry.logStandardEvent(FlurryEvent.purchased, paramBuilder);
   }
 
   static void config() {
-    Flurry.config.registerListener(new MyConfigListener());
+    Flurry.config.registerListener(MyConfigListener());
     Flurry.config.fetchConfig();
   }
 
   static void publisherSegmentation() {
-    Flurry.publisherSegmentation.registerListener(new MyPublisherSegmentationListener());
+    Flurry.publisherSegmentation.registerListener(MyPublisherSegmentationListener());
     Flurry.publisherSegmentation.fetch();
   }
 }
@@ -136,21 +136,21 @@ class MyConfigListener with ConfigListener {
   void onFetchNoChange() {
     // Fetch finished, but data unchanged.
     Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
-      print('Received unchanged data: ' + welcomeMessage);
+      print('Received unchanged data: $welcomeMessage');
     });
   }
 
   @override
   void onFetchError(bool isRetrying) {
     // Fetch failed.
-    print('Fetch error! Retrying: ' + isRetrying.toString());
+    print('Fetch error! Retrying: $isRetrying');
   }
 
   @override
   void onActivateComplete(bool isCache) {
     // Received cached data, or newly activated data.
     Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
-      print((isCache ? 'Received cached data: ' : 'Received newly activated data: ') + welcomeMessage);
+      print((isCache ? 'Received cached data: $welcomeMessage' : 'Received newly activated data: $welcomeMessage'));
     });
   }
 }
@@ -158,39 +158,39 @@ class MyConfigListener with ConfigListener {
 class MyMessagingListener with MessagingListener {
   @override
   bool onNotificationClicked(Message message) {
-    printMessage("onNotificationClicked", message);
+    printMessage('onNotificationClicked', message);
     return false;
   }
 
   @override
   bool onNotificationReceived(Message message) {
-    printMessage("onNotificationReceived", message);
+    printMessage('onNotificationReceived', message);
     return false;
   }
 
   @override
   void onNotificationCancelled(Message message) {
-    printMessage("onNotificationCancelled", message);
+    printMessage('onNotificationCancelled', message);
   }
 
   @override
   void onTokenRefresh(String token){
-    print("Flurry Messaging Type: onTokenRefresh" +
-        "\n    Token: " + token);
+    print('Flurry Messaging Type: onTokenRefresh'
+        '\n    Token: $token');
   }
 
   static printMessage(String type, Message message) {
-    print('Flurry Messaging Type: ' + type +
-        '\n    Title: ' + message.title +
-        '\n    Body: ' + message.body +
-        '\n    ClickAction: ' + ((message.clickAction == null) ? 'null' : message.clickAction) +
-        '\n    Data:' + message.appData.toString());
+    print('Flurry Messaging Type: $type'
+        '\n    Title: $message.title'
+        '\n    Body: $message.body'
+        '\n    ClickAction: $message.clickAction'
+        '\n    Data: $message.appData');
   }
 }
 
 class MyPublisherSegmentationListener with PublisherSegmentationListener {
   @override
   void onFetched(Map<String, String> data) {
-    print("Publisher Segmentation data fetched:" + data.toString());
+    print('Publisher Segmentation data fetched: $data');
   }
 }

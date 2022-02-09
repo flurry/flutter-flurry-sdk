@@ -17,7 +17,7 @@ A Flutter plugin for Flurry SDK
 
 ## Installation
 
-1. Install Flutter Flurry SDK plugin by running this command in the terminal from the directory containing `pubspec.yaml` file.
+1. Install Flutter Flurry SDK plugin by running this command in the terminal from the directory containing `pubspec.yaml` file. And run an implicit `flutter pub get`.
 
    ```bash
    $ flutter pub add flutter_flurry_sdk
@@ -137,13 +137,13 @@ A Flutter plugin for Flurry SDK
    
    // Example to get Flurry versions.
    int agentVersion = await Flurry.getAgentVersion();
-   print("Agent Version: $agentVersion");
-   
-   String releaseVersion = await Flurry.getReleaseVersion();
-   print("Release Version: $releaseVersion");
-   
-   String sessionId = await Flurry.getSessionId();
-   print("Session Id: $sessionId");
+   print('Agent Version: $agentVersion');
+
+   String? releaseVersion = await Flurry.getReleaseVersion();
+   print('Release Version: $releaseVersion');
+
+   String? sessionId = await Flurry.getSessionId();
+   print('Session Id: $sessionId');
    
    // Set Flurry preferences.
    Flurry.setLogEnabled(true);
@@ -159,7 +159,7 @@ A Flutter plugin for Flurry SDK
    
    // Log Flurry events.
    Flurry.logEvent('Flutter Event');
-   Map<String, String> map = Map<String, String>();
+   var map = <String, String>{};
    for (int i = 0; i < 6; i++) {
        map.putIfAbsent('$i', () => '$i');
    }
@@ -168,11 +168,11 @@ A Flutter plugin for Flurry SDK
    Flurry.endTimedEvent('Flutter Timed Event');
    
    // Log Flurry standard events.
-   Param paramBuilder = new Param()
+   var paramBuilder = Param()
        .putDoubleParam(EventParam.totalAmount, 34.99)
        .putBooleanParam(EventParam.success, true)
-       .putStringParam(EventParam.itemName, "book 1")
-       .putString("note", "This is an awesome book to purchase !!!");
+       .putStringParam(EventParam.itemName, 'book 1')
+       .putString('note', 'This is an awesome book to purchase !!!');
    Flurry.logStandardEvent(FlurryEvent.purchased, paramBuilder);
    ...
    ```
@@ -180,7 +180,7 @@ A Flutter plugin for Flurry SDK
 - `lib/config.dart`
 
    ```dart
-   Flurry.config.registerListener(new MyConfigListener());
+   Flurry.config.registerListener(MyConfigListener());
    Flurry.config.fetchConfig();
    
    class MyConfigListener with ConfigListener {
@@ -194,21 +194,21 @@ A Flutter plugin for Flurry SDK
        void onFetchNoChange() {
            // Fetch finished, but data unchanged.
            Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
-               print('Received unchanged data: ' + welcomeMessage);
+               print('Received unchanged data: $welcomeMessage');
            });
        }
    
        @override
        void onFetchError(bool isRetrying) {
            // Fetch failed.
-           print('Fetch error! Retrying: ' + isRetrying.toString());
+           print('Fetch error! Retrying: $isRetrying');
        }
    
        @override
        void onActivateComplete(bool isCache) {
            // Received cached data, or newly activated data.
            Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
-               print((isCache ? 'Received cached data: ' : 'Received newly activated data: ') + welcomeMessage);
+               print((isCache ? 'Received cached data: $welcomeMessage' : 'Received newly activated data: $welcomeMessage'));
            });
        }
    }
@@ -224,39 +224,39 @@ A Flutter plugin for Flurry SDK
    
    // Optionally add a listener to receive messaging events, and handle the notification.
    Flurry.builder
-       .withMessaging(true, new MyMessagingListener())
+       .withMessaging(true, MyMessagingListener())
    ...
    
    class MyMessagingListener with MessagingListener {
        @override
        bool onNotificationClicked(Message message) {
-           printMessage("onNotificationClicked", message);
+           printMessage('onNotificationClicked', message);
            return false;
        }
    
        @override
        bool onNotificationReceived(Message message) {
-           printMessage("onNotificationReceived", message);
+           printMessage('onNotificationReceived', message);
            return false;
        }
    
        @override
        void onNotificationCancelled(Message message) {
-           printMessage("onNotificationCancelled", message);
+           printMessage('onNotificationCancelled', message);
        }
    
        @override
        void onTokenRefresh(String token) {
-           print("Flurry Messaging Type: onTokenRefresh" +
-               "\n    Token: " + token);
+           print('Flurry Messaging Type: onTokenRefresh'
+               '\n    Token: $token');
        }
    
        static printMessage(String type, Message message) {
-           print('Flurry Messaging Type: ' + type +
-               '\n    Title: ' + message.title +
-               '\n    Body: ' + message.body +
-               '\n    ClickAction: ' + ((message.clickAction == null) ? 'null' : message.clickAction) +
-               '\n    Data:' + message.appData.toString());
+           print('Flurry Messaging Type: $type'
+               '\n    Title: $message.title'
+               '\n    Body: $message.body'
+               '\n    ClickAction: $message.clickAction'
+               '\n    Data: $message.appData');
        }
    }
    ```
@@ -264,13 +264,13 @@ A Flutter plugin for Flurry SDK
 - `lib/publisher.dart`
 
    ```dart
-   Flurry.publisherSegmentation.registerListener(new MyPublisherSegmentationListener());
+   Flurry.publisherSegmentation.registerListener(MyPublisherSegmentationListener());
    Flurry.publisherSegmentation.fetch();
    
    class MyPublisherSegmentationListener with PublisherSegmentationListener {
        @override
        void onFetched(Map<String, String> data) {
-          print("Publisher Segmentation data fetched:" + data.toString());
+          print('Publisher Segmentation data fetched: $data');
        }
    }
    ```
