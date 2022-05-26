@@ -28,22 +28,22 @@ public class FlurryFlutterApplication extends FlutterApplication {
     public void onCreate() {
         super.onCreate();
 
-        // Optional user's native `FlurryMarketingOptions` or `FlurryMessagingListener`.
-        FlurryMarketingOptions messagingOptions = new FlurryMarketingOptions.Builder()
-                .setupMessagingWithAutoIntegration()
-                .withDefaultNotificationIconResourceId(R.mipmap.ic_launcher)
-                // Define yours if needed
-                // .withDefaultNotificationChannelId(NOTIFICATION_CHANNEL_ID)
-                // .withDefaultNotificationIconAccentColor(getResources().getColor(R.color.colorPrimary))
-                // .withFlurryMessagingListener(messagingListener)
-                .build();
-
-        // To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.
-        new FlurryFlutterPlugin.Builder()
-                .withLogEnabled(true)
-                .withLogLevel(Log.VERBOSE)
-                .withMessaging(true, messagingOptions)
-                .build(this, "C9R699NJWSMJVPQWJ273");
+//        // Optional user's native `FlurryMarketingOptions` or `FlurryMessagingListener`.
+//        FlurryMarketingOptions messagingOptions = new FlurryMarketingOptions.Builder()
+//                .setupMessagingWithAutoIntegration()
+//                .withDefaultNotificationIconResourceId(R.mipmap.ic_launcher)
+//                // Define yours if needed
+//                // .withDefaultNotificationChannelId(NOTIFICATION_CHANNEL_ID)
+//                // .withDefaultNotificationIconAccentColor(getResources().getColor(R.color.colorPrimary))
+//                // .withFlurryMessagingListener(messagingListener)
+//                .build();
+//
+//        // To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.
+//        new FlurryFlutterPlugin.Builder()
+//                .withLogEnabled(true)
+//                .withLogLevel(Log.VERBOSE)
+//                .withMessaging(true, messagingOptions)
+//                .build(this, "C9R699NJWSMJVPQWJ273");
     }
 
 }

@@ -35,8 +35,12 @@ class FlurryAgent {
   }
 
   void setCrashReporting(bool crashReporting) {
-    _agentChannel.invokeMethod('setCrashReporting',
-        <String, dynamic>{'crashReporting': crashReporting});
+    if (Platform.isIOS) {
+      print('Flurry iOS SDK does not implement setCrashReporting method');
+    } else if (Platform.isAndroid) {
+      _agentChannel.invokeMethod('setCrashReporting',
+          <String, dynamic>{'crashReporting': crashReporting});
+    }
   }
 
   void setIncludeBackgroundSessionsInMetrics(
@@ -48,20 +52,28 @@ class FlurryAgent {
   }
 
   void setLogEnabled(bool enableLog) {
-    _agentChannel.invokeMethod(
-        'setLogEnabled', <String, dynamic>{'enableLog': enableLog});
+    if (Platform.isIOS) {
+      print('Flurry iOS SDK does not implement setLogEnabled method');
+    } else if (Platform.isAndroid) {
+      _agentChannel.invokeMethod(
+          'setLogEnabled', <String, dynamic>{'enableLog': enableLog});
+    }
   }
 
   void setLogLevel(LogLevel logLevel) {
     int logLevelInt = Flurry().getLogLevel(logLevel);
     String logLevelStr = logLevelInt.toString();
-    _agentChannel.invokeMethod(
-        'setLogLevel', <String, dynamic>{'logLevelStr': logLevelStr});
+    if (Platform.isIOS) {
+      print('Flurry iOS SDK does not implement setLogLevel method');
+    } else if (Platform.isAndroid) {
+      _agentChannel.invokeMethod(
+          'setLogLevel', <String, dynamic>{'logLevelStr': logLevelStr});
+    }
   }
 
   void setSslPinningEnabled(bool sslPinningEnabled) {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implement setSslPinningEnabled method");
+      print('Flurry iOS SDK does not implement setSslPinningEnabled method');
     } else {
       _agentChannel.invokeMethod('setSslPinningEnabled',
           <String, dynamic>{'sslPinningEnabled': sslPinningEnabled});
@@ -77,13 +89,10 @@ class FlurryAgent {
 
   void addOriginWithParameters(String originName, String originVersion,
       Map<String, String> originParameters) {
-    String keysStr = keysToString(originParameters);
-    String valuesStr = valuesToString(originParameters);
     _agentChannel.invokeMethod('addOriginWithParameters', <String, dynamic>{
       'originName': originName,
       'originVersion': originVersion,
-      'keysStr': keysStr,
-      'valuesStr': valuesStr
+      'originParameters': originParameters
     });
   }
 
@@ -103,13 +112,8 @@ class FlurryAgent {
 
   void endTimedEventWithParameters(
       String eventId, Map<String, String> parameters) {
-    String keysStr = keysToString(parameters);
-    String valuesStr = valuesToString(parameters);
-    _agentChannel.invokeMethod('endTimedEventWithParameters', <String, dynamic>{
-      'eventId': eventId,
-      'keysStr': keysStr,
-      'valuesStr': valuesStr
-    });
+    _agentChannel.invokeMethod('endTimedEventWithParameters',
+        <String, dynamic>{'eventId': eventId, 'parameters': parameters});
   }
 
   Future<int> getAgentVersion() async {
@@ -136,14 +140,8 @@ class FlurryAgent {
 
   Future<int> logEventWithParameters(
       String eventId, Map<String, String> parameters) async {
-    String keysStr = keysToString(parameters);
-    String valuesStr = valuesToString(parameters);
-    return await _agentChannel.invokeMethod(
-        'logEventWithParameters', <String, dynamic>{
-      'eventId': eventId,
-      'keysStr': keysStr,
-      'valuesStr': valuesStr
-    });
+    return await _agentChannel.invokeMethod('logEventWithParameters',
+        <String, dynamic>{'eventId': eventId, 'parameters': parameters});
   }
 
   Future<int> logPayment(
@@ -154,8 +152,6 @@ class FlurryAgent {
       String currency,
       String transactionId,
       Map<String, String> parameters) async {
-    String keysStr = keysToString(parameters);
-    String valuesStr = valuesToString(parameters);
     return await _agentChannel.invokeMethod('logPayment', <String, dynamic>{
       'productName': productName,
       'productId': productId,
@@ -163,8 +159,7 @@ class FlurryAgent {
       'price': price,
       'currency': currency,
       'transactionId': transactionId,
-      'keysStr': keysStr,
-      'valuesStr': valuesStr
+      'parameters': parameters
     });
   }
 
@@ -175,13 +170,10 @@ class FlurryAgent {
 
   Future<int> logTimedEventWithParameters(
       String eventId, Map<String, String> parameters, bool timed) async {
-    String keysStr = keysToString(parameters);
-    String valuesStr = valuesToString(parameters);
     return await _agentChannel.invokeMethod(
         'logTimedEventWithParameters', <String, dynamic>{
       'eventId': eventId,
-      'keysStr': keysStr,
-      'valuesStr': valuesStr,
+      'parameters': parameters,
       'timed': timed
     });
   }
@@ -220,14 +212,11 @@ class FlurryAgent {
 
   void onErrorWithParameters(String errorId, String message, String errorClass,
       Map<String, String> parameters) {
-    String keysStr = keysToString(parameters);
-    String valuesStr = valuesToString(parameters);
     _agentChannel.invokeMethod('onErrorWithParameters', <String, dynamic>{
       'errorId': errorId,
       'message': message,
       'errorClass': errorClass,
-      'keysStr': keysStr,
-      'valuesStr': valuesStr
+      'parameters': parameters
     });
   }
 
@@ -244,9 +233,9 @@ class FlurryAgent {
 
   void setGender(Gender gender) {
     if (gender == Gender.male) {
-      _agentChannel.invokeMethod('setGender', <String, dynamic>{'gender': "m"});
+      _agentChannel.invokeMethod('setGender', <String, dynamic>{'gender': 'm'});
     } else if (gender == Gender.female) {
-      _agentChannel.invokeMethod('setGender', <String, dynamic>{'gender': "f"});
+      _agentChannel.invokeMethod('setGender', <String, dynamic>{'gender': 'f'});
     }
   }
 
@@ -262,7 +251,7 @@ class FlurryAgent {
 
   void setReportLocation(bool reportLocation) {
     if (Platform.isIOS) {
-      print("This method is applied based on the user permissions of the app.");
+      print('This method is applied based on the user permissions of the app.');
     } else {
       _agentChannel.invokeMethod('setReportLocation',
           <String, dynamic>{'reportLocation': reportLocation});
@@ -299,44 +288,6 @@ class FlurryAgent {
           <String, dynamic>{'flurryEventStr': flurryEventStr});
     }
   }
-
-  //out or reference paramters are not possible in dart
-  String keysToString(Map<String, String>? map) {
-    if (map == null) {
-      return "";
-    }
-
-    var keyStr = StringBuffer();
-
-    for (String key in map.keys) {
-      keyStr.write(key);
-      keyStr.write("\n");
-    }
-    if (keyStr.length > 0) {
-      var str = keyStr.toString();
-      return str.substring(0, str.length - 1);
-    }
-    return keyStr.toString();
-  }
-
-  //out or reference parameters are not possible in dart.
-  String valuesToString(Map<String, String>? map) {
-    if (map == null) {
-      return "";
-    }
-
-    var valueStr = StringBuffer();
-
-    for (String value in map.values) {
-      valueStr.write(value);
-      valueStr.write("\n");
-    }
-    if (valueStr.length > 0) {
-      var str = valueStr.toString();
-      return str.substring(0, str.length - 1);
-    }
-    return valueStr.toString();
-  }
 }
 
 class BuilderAgent {
@@ -349,11 +300,11 @@ class BuilderAgent {
   }
 
   void build(Map<String, dynamic> apiKeys) {
-    String apiKey = "";
+    String apiKey = '';
     if (Platform.isIOS) {
-      apiKey = apiKeys["iosAPIKey"];
+      apiKey = apiKeys['iosAPIKey'];
     } else if (Platform.isAndroid) {
-      apiKey = apiKeys["androidAPIKey"];
+      apiKey = apiKeys['androidAPIKey'];
     }
     _agentBuilderChannel.invokeMethod('buildFlurryBuilder', <String, dynamic>{
       'apiKey': apiKey,
@@ -410,7 +361,7 @@ class BuilderAgent {
 
   void withPerformanceMetrics(int performanceMetrics) {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implement withPerformanceMetrics method");
+      print('Flurry iOS SDK does not implement withPerformanceMetrics method');
     } else {
       _agentBuilderChannel.invokeMethod('withPerformanceMetrics',
           <String, dynamic>{'performanceMetrics': performanceMetrics});
@@ -419,7 +370,7 @@ class BuilderAgent {
 
   void withSslPinningEnabled(bool sslPinningEnabled) {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implement withSslPinningEnabled method");
+      print('Flurry iOS SDK does not implement withSslPinningEnabled method');
     } else {
       _agentBuilderChannel.invokeMethod('withSslPinningEnabled',
           <String, dynamic>{'sslPinningEnabled': sslPinningEnabled});
@@ -440,11 +391,10 @@ class UserPropertiesAgent {
   }
 
   void addUserPropertyValues(String propertyName, List<String> propertyValues) {
-    String propertyValuesStr = propertyValues.join('\n');
     _agentUserPropertiesIOSChannel.invokeMethod(
         'addUserPropertyValues', <String, dynamic>{
       'propertyName': propertyName,
-      'propertyValuesStr': propertyValuesStr
+      'propertyValues': propertyValues
     });
   }
 
@@ -468,11 +418,10 @@ class UserPropertiesAgent {
 
   void removeUserPropertyValues(
       String propertyName, List<String> propertyValues) {
-    String propertyValuesStr = propertyValues.join('\n');
     _agentUserPropertiesIOSChannel.invokeMethod(
         'removeUserPropertyValues', <String, dynamic>{
       'propertyName': propertyName,
-      'propertyValuesStr': propertyValuesStr
+      'propertyValues': propertyValues
     });
   }
 
@@ -485,11 +434,10 @@ class UserPropertiesAgent {
   }
 
   void setUserPropertyValues(String propertyName, List<String> propertyValues) {
-    String propertyValuesStr = propertyValues.join('\n');
     _agentUserPropertiesIOSChannel.invokeMethod(
         'setUserPropertyValues', <String, dynamic>{
       'propertyName': propertyName,
-      'propertyValuesStr': propertyValuesStr
+      'propertyValues': propertyValues
     });
   }
 }
@@ -500,7 +448,7 @@ class PerformanceAgent {
 
   void reportFullyDrawn() {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implemented ReportFullyDrawn method.");
+      print('Flurry iOS SDK does not implemented ReportFullyDrawn method.');
     } else if (Platform.isAndroid) {
       _agentPerformanceChannel.invokeMethod('reportFullyDrawn');
     }
@@ -508,7 +456,7 @@ class PerformanceAgent {
 
   void startResourceLogger() {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implement StartResourceLogger method.");
+      print('Flurry iOS SDK does not implement StartResourceLogger method.');
     } else if (Platform.isAndroid) {
       _agentPerformanceChannel.invokeMethod('startResourceLogger');
     }
@@ -516,7 +464,7 @@ class PerformanceAgent {
 
   void logResourceLogger(String id) {
     if (Platform.isIOS) {
-      print("Flurry iOS SDK does not implement LogResourseLogger method.");
+      print('Flurry iOS SDK does not implement LogResourseLogger method.');
     } else if (Platform.isAndroid) {
       _agentPerformanceChannel
           .invokeMethod('logResourceLogger', <String, dynamic>{'id': id});
@@ -538,9 +486,7 @@ class MessagingAgent {
   MessagingListener? listener;
 
   void withMessaging() {
-    if (Platform.isIOS) {
-      _messagingChannel.invokeMethod('withMessaging');
-    }
+    _messagingChannel.invokeMethod('withMessaging');
   }
 
   void setListener(MessagingListener listener) {
@@ -552,13 +498,13 @@ class MessagingAgent {
   }
 
   void _onEvent(Object? e) {
-    print("Flurry Messaging callback will be triggered");
+    print('Flurry Messaging callback will be triggered');
     if (e is Map) {
       Map<String, dynamic> event = Map<String, dynamic>.from(e);
       if (event.containsKey('type')) {
         switch (event['type'] as String) {
           case notificationReceived:
-            print("Flurry Messaging received callback triggered");
+            print('Flurry Messaging received callback triggered');
             if (Platform.isIOS) {
               listener?.onNotificationReceived(convertToMessage(event));
             } else if (Platform.isAndroid) {
@@ -571,7 +517,7 @@ class MessagingAgent {
             }
             break;
           case notificationClicked:
-            print("Flurry Messaging clicked callback triggered");
+            print('Flurry Messaging clicked callback triggered');
             if (Platform.isIOS) {
               listener?.onNotificationClicked(convertToMessage(event));
             } else if (Platform.isAndroid) {
@@ -584,11 +530,11 @@ class MessagingAgent {
             }
             break;
           case notificationCancelled:
-            print("Flurry Messaging canceled callback triggered");
+            print('Flurry Messaging canceled callback triggered');
             listener?.onNotificationCancelled(convertToMessage(event));
             break;
           case tokenRefresh:
-            print("Flurry Messaging token refreshed callback triggered");
+            print('Flurry Messaging token refreshed callback triggered');
             listener?.onTokenRefresh(event['token'] as String);
             break;
         }
@@ -598,16 +544,16 @@ class MessagingAgent {
 
   Message convertToMessage(Map<String, dynamic> event) {
     Message message = Message();
-    message.title = event['title'] as String;
-    message.body = event['body'] as String;
-    message.clickAction = event['clickAction'] as String;
+    message.title = event['title'];
+    message.body = event['body'];
+    message.clickAction = event['clickAction'];
     message.appData = Map<String, String>.from(event['appData']);
 
     return message;
   }
 
   void _onError(Object error) {
-    print("error receiving push callbacks");
+    print('error receiving push callbacks');
   }
 }
 
@@ -643,19 +589,19 @@ class ConfigAgent {
   }
 
   void _onEvent(Object? e) {
-    print("Flurry Config Listener callback will be triggered");
+    print('Flurry Config Listener callback will be triggered');
     if (e is Map) {
       Map<String, String> event = Map<String, String>.from(e);
       if (event.containsKey('type')) {
         String? type = event['type'];
         if (type == fetchSuccess) {
-          print("onFetchSuccess() triggered");
+          print('onFetchSuccess() triggered');
           _listeners.forEach((element) => element.onFetchSuccess());
         } else if (type == fetchNoChange) {
-          print("onFetchNoChange() triggered");
+          print('onFetchNoChange() triggered');
           _listeners.forEach((element) => element.onFetchNoChange());
         } else if (type == fetchError) {
-          print("onFetchError() triggered");
+          print('onFetchError() triggered');
           if (Platform.isIOS) {
             _listeners.forEach((element) => element.onFetchError(false));
           } else if (Platform.isAndroid) {
@@ -667,7 +613,7 @@ class ConfigAgent {
             _listeners.forEach((element) => element.onFetchError(isRetrying));
           }
         } else if (type == activateComplete) {
-          print("onActivateComplete() triggered");
+          print('onActivateComplete() triggered');
           if (Platform.isIOS) {
             _listeners.forEach((element) => element.onActivateComplete(false));
           } else if (Platform.isAndroid) {
@@ -685,7 +631,7 @@ class ConfigAgent {
   }
 
   void _onError(Object error) {
-    print("error receiving fetch callbacks");
+    print('error receiving fetch callbacks');
   }
 
   Future<String> getConfigString(String key, String defaultValue) async {
@@ -782,16 +728,16 @@ class PublisherSegmentationAgent {
   }
 
   void _onEvent(Object? e) {
-    print("Flurry Publisher Segmentation Listener callback will be triggered");
+    print('Flurry Publisher Segmentation Listener callback will be triggered');
     if (e is Map) {
       Map<String, String> event = Map<String, String>.from(e);
-      print("Publisher Segmentation onFetched triggered");
+      print('Publisher Segmentation onFetched triggered');
       _listeners.forEach((element) => element.onFetched(event));
     }
   }
 
   void _onError(Object error) {
-    print("error receiving fetch callbacks");
+    print('error receiving fetch callbacks');
   }
 
   Future<Map<String, String>> getPublisherData() async {

@@ -37,8 +37,6 @@ import com.flurry.android.marketing.FlurryMarketingOptions;
 import com.flurry.android.marketing.messaging.FlurryMessagingListener;
 import com.flurry.android.marketing.messaging.notification.FlurryMessage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +54,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static final String TAG = "FlurryFlutterPlugin";
 
     private static final String ORIGIN_NAME = "flutter-flurry-sdk";
-    private static final String ORIGIN_VERSION = "1.1.0";
+    private static final String ORIGIN_VERSION = "2.1.0";
 
     private Context context;
 
@@ -64,6 +62,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static FlurryPerformance.ResourceLogger flurryResourceLogger;
     private static FlutterFlurryConfigListener sFlutterFlurryConfigListener;
     private static FlutterFlurryPublisherListener sFlutterFlurryPublisherListener;
+    private static boolean messagingInitialized = false;
 
     /**
      * The MethodChannel/EventChannel that will the communication between Flutter and native Android
@@ -235,8 +234,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "addUserPropertyValues":
                 propertyName = call.argument("propertyName");
-                String propertyValuesStr = call.argument("propertyValuesStr");
-                addUserPropertyValues(propertyName, propertyValuesStr);
+                List<String> propertyValues = call.argument("propertyValues");
+                addUserPropertyValues(propertyName, propertyValues);
                 break;
             case "flagUserProperty":
                 propertyName = call.argument("propertyName");
@@ -253,8 +252,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "removeUserPropertyValues":
                 propertyName = call.argument("propertyName");
-                propertyValuesStr = call.argument("propertyValuesStr");
-                removeUserPropertyValues(propertyName, propertyValuesStr);
+                propertyValues = call.argument("propertyValues");
+                removeUserPropertyValues(propertyName, propertyValues);
                 break;
             case "setUserPropertyValue":
                 propertyName = call.argument("propertyName");
@@ -263,8 +262,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "setUserPropertyValues":
                 propertyName = call.argument("propertyName");
-                propertyValuesStr = call.argument("propertyValuesStr");
-                setUserPropertyValues(propertyName, propertyValuesStr);
+                propertyValues = call.argument("propertyValues");
+                setUserPropertyValues(propertyName, propertyValues);
                 break;
             case "reportFullyDrawn":
                 reportFullyDrawn();
@@ -311,9 +310,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             case "addOriginWithParameters":
                 originName = call.argument("originName");
                 originVersion = call.argument("originVersion");
-                String parametersKeys = call.argument("keysStr");
-                String parameterValuesStr = call.argument("valuesStr");
-                addOriginWithParameters(originName, originVersion, parametersKeys, parameterValuesStr);
+                Map<String, String> parameters = call.argument("originParameters");
+                addOriginWithParameters(originName, originVersion, parameters);
                 break;
             case "addSessionProperty":
                 String sessionName = call.argument("name");
@@ -355,9 +353,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "logEventWithParameters":
                 eventId = call.argument("eventId");
-                String keysStr = call.argument("keysStr");
-                String valuesStr = call.argument("valuesStr");
-                status = logEventWithParameters(eventId, keysStr, valuesStr);
+                parameters = call.argument("parameters");
+                status = logEventWithParameters(eventId, parameters);
                 result.success(status);
                 break;
             case "logTimedEvent":
@@ -368,10 +365,9 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "logTimedEventWithParameters":
                 eventId = call.argument("eventId");
-                keysStr = call.argument("keysStr");
-                valuesStr = call.argument("valuesStr");
+                parameters = call.argument("parameters");
                 timed = call.<Boolean>argument("timed");
-                status = logTimedEventWithParameters(eventId, keysStr, valuesStr, timed);
+                status = logTimedEventWithParameters(eventId, parameters, timed);
                 result.success(status);
                 break;
             case "endTimedEvent":
@@ -380,9 +376,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "endTimedEventWithParameters":
                 eventId = call.argument("eventId");
-                keysStr = call.argument("keysStr");
-                valuesStr = call.argument("valuesStr");
-                endTimedEventWithParameters(eventId, keysStr, valuesStr);
+                parameters = call.argument("parameters");
+                endTimedEventWithParameters(eventId, parameters);
                 break;
             case "logStandardEvent":
                 int standardId = call.<Integer>argument("id");
@@ -401,9 +396,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 errorId = call.argument("errorId");
                 message = call.argument("message");
                 errorClass = call.argument("errorClass");
-                keysStr = call.argument("keysStr");
-                valuesStr = call.argument("valuesStr");
-                onErrorWithParameters(errorId, message, errorClass, keysStr, valuesStr);
+                parameters = call.argument("parameters");
+                onErrorWithParameters(errorId, message, errorClass, parameters);
                 break;
             case "logBreadcrumb":
                 String crashBreadcrumb = call.argument("crashBreadcrumb");
@@ -416,9 +410,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 double price = call.<Double>argument("price");
                 String currency = call.argument("currency");
                 String transactionId = call.argument("transactionId");
-                keysStr = call.argument("keysStr");
-                valuesStr = call.argument("valuesStr");
-                status = logPayment(productName, productId, quantity, price, currency, transactionId, keysStr, valuesStr);
+                parameters = call.argument("parameters");
+                status = logPayment(productName, productId, quantity, price, currency, transactionId, parameters);
                 result.success(status);
                 break;
             case "registerConfigListener":
@@ -507,15 +500,31 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     }
 
     public void withMessaging() {
-        Log.i(TAG, "To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.");
+        Log.i(TAG, "To customize Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.");
+
+        if (messagingInitialized) {
+            return;
+        }
+
+        FlutterFlurryMessagingListener messagingListener = new FlutterFlurryMessagingListener();
+        FlurryMarketingOptions messagingOptions = new FlurryMarketingOptions.Builder()
+                .setupMessagingWithAutoIntegration()
+                .withFlurryMessagingListener(messagingListener, getHandler())
+                // Define yours if needed
+                // .withDefaultNotificationChannelId(NOTIFICATION_CHANNEL_ID)
+                // .withDefaultNotificationIconResourceId(R.mipmap.ic_launcher_round)
+                // .withDefaultNotificationIconAccentColor(getResources().getColor(R.color.colorPrimary))
+                .build();
+
+        FlurryMarketingModule marketingModule = new FlurryMarketingModule(messagingOptions);
+        builder.withModule(marketingModule);
     }
 
     public void addUserPropertyValue(String propertyName, String propertyValue) {
         FlurryAgent.UserProperties.add(propertyName, propertyValue);
     }
 
-    public void addUserPropertyValues(String propertyName, String propertyValuesStr) {
-        List<String> propertyValues = stringToList(propertyValuesStr);
+    public void addUserPropertyValues(String propertyName, List<String> propertyValues) {
         FlurryAgent.UserProperties.add(propertyName, propertyValues);
     }
 
@@ -531,8 +540,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         FlurryAgent.UserProperties.remove(propertyName, propertyValue);
     }
 
-    public void removeUserPropertyValues(String propertyName, String propertyValuesStr) {
-        List<String> propertyValues = stringToList(propertyValuesStr);
+    public void removeUserPropertyValues(String propertyName, List<String> propertyValues) {
         FlurryAgent.UserProperties.remove(propertyName, propertyValues);
     }
 
@@ -540,8 +548,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         FlurryAgent.UserProperties.set(propertyName, propertyValue);
     }
 
-    public void setUserPropertyValues(String propertyName, String propertyValuesStr) {
-        List<String> propertyValues = stringToList(propertyValuesStr);
+    public void setUserPropertyValues(String propertyName, List<String> propertyValues) {
         FlurryAgent.UserProperties.set(propertyName, propertyValues);
     }
 
@@ -595,8 +602,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     }
 
     public void addOriginWithParameters(String originName, String originVersion,
-                                              String keysStr, String valuesStr) {
-        Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
+                                        Map<String, String> parameters) {
         FlurryAgent.addOrigin(originName, originVersion, parameters);
     }
 
@@ -655,8 +661,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         return (status != null) ? status.ordinal() : 0;
     }
 
-    public int logEventWithParameters(String eventId, String keysStr, String valuesStr) {
-        Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
+    public int logEventWithParameters(String eventId, Map<String, String> parameters) {
         FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, parameters);
         return (status != null) ? status.ordinal() : 0;
     }
@@ -666,8 +671,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         return (status != null) ? status.ordinal() : 0;
     }
 
-    public int logTimedEventWithParameters(String eventId, String keysStr, String valuesStr, boolean timed) {
-        Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
+    public int logTimedEventWithParameters(String eventId, Map<String, String> parameters, boolean timed) {
         FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, parameters, timed);
         return (status != null) ? status.ordinal() : 0;
     }
@@ -676,8 +680,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         FlurryAgent.endTimedEvent(eventId);
     }
 
-    public void endTimedEventWithParameters(String eventId, String keysStr, String valuesStr) {
-        Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
+    public void endTimedEventWithParameters(String eventId, Map<String, String> parameters) {
         FlurryAgent.endTimedEvent(eventId, parameters);
     }
 
@@ -712,8 +715,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         FlurryAgent.onError(errorId, message, errorClass);
     }
 
-    public void onErrorWithParameters(String errorId, String message, String errorClass, String keysStr, String valuesStr) {
-        Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
+    public void onErrorWithParameters(String errorId, String message, String errorClass, Map<String, String> parameters) {
         FlurryAgent.onError(errorId, message, errorClass, parameters);
     }
 
@@ -722,42 +724,17 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     }
 
     public int logPayment(String productName, String productId, int quantity, double price,
-                                String currency, String transactionId, String keysStr, String valuesStr) {
-        Map<String, String> parameters = keyValueToMap(keysStr, valuesStr);
+                                String currency, String transactionId, Map<String, String> parameters) {
         FlurryEventRecordStatus status = FlurryAgent.logPayment(productName, productId, quantity, price, currency,
                 transactionId, parameters);
         return (status != null) ? status.ordinal() : 0;
-    }
-
-    public List<String> stringToList(String listStr) {
-        String strs[] = listStr.split("\n");
-        List<String> list = new ArrayList<String>();
-        list = Arrays.asList(strs);
-        return list;
-    }
-
-    public Map<String, String> keyValueToMap(String keysStr, String valuesStr) {
-        if (keysStr == null || valuesStr == null) {
-            return null;
-        }
-
-        Map<String, String> map = new HashMap<>();
-
-        String keys[] = keysStr.split("\n");
-        String values[] = valuesStr.split("\n");
-
-        for (int i = 0 ; i < keys.length; i++) {
-            map.put(keys[i], values[i]);
-        }
-
-        return map;
     }
 
     /**
      * Builder Pattern class for Flurry. Used by FlutterApplication to initialize Flurry Push for messaging.
      */
     public static class Builder {
-        private FlurryAgent.Builder mFlurryAgentBuilder;
+        private final FlurryAgent.Builder mFlurryAgentBuilder;
 
         public Builder() {
             mFlurryAgentBuilder = new FlurryAgent.Builder();
@@ -838,9 +815,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
          * @return The Builder instance.
          */
         public Builder withMessaging(final boolean enableMessaging) {
-            withMessaging(enableMessaging, (FlurryMessagingListener) null);
-
-            return this;
+            return withMessaging(enableMessaging, (FlurryMessagingListener) null);
         }
 
         /**
@@ -872,6 +847,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             FlurryMarketingModule marketingModule = new FlurryMarketingModule(messagingOptions);
             mFlurryAgentBuilder.withModule(marketingModule);
 
+            messagingInitialized = true;
             return this;
         }
 
@@ -887,7 +863,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 return this;
             }
 
-            // If user does not specify the messaging listener, use the React Native default listener.
+            // If user does not specify the messaging listener, use the Flutter default listener.
             if (messagingOptions.getFlurryMessagingListener() == null) {
                 FlurryMarketingOptions.Builder builder = new FlurryMarketingOptions.Builder();
                 if (messagingOptions.isAutoIntegration()) {
@@ -907,16 +883,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             FlurryMarketingModule marketingModule = new FlurryMarketingModule(messagingOptions);
             mFlurryAgentBuilder.withModule(marketingModule);
 
+            messagingInitialized = true;
             return this;
-        }
-
-        private Handler getHandler() {
-            // Use non-UI thread to notify the messaging listeners.
-            HandlerThread handlerThread = new HandlerThread("FlurryHandlerThread");
-            handlerThread.start();
-            Handler handler = new Handler(handlerThread.getLooper());
-
-            return handler;
         }
 
         public void build(final Context context, final String apiKey) {
@@ -924,6 +892,14 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                     .withSessionForceStart(true)
                     .build(context, apiKey);
         }
+    }
+
+    private static Handler getHandler() {
+        // Use non-UI thread to notify the messaging listeners.
+        HandlerThread handlerThread = new HandlerThread("FlurryHandlerThread");
+        handlerThread.start();
+
+        return new Handler(handlerThread.getLooper());
     }
 
     /**
@@ -956,7 +932,8 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
 
         @Override
         public void onFetchSuccess() {
-            sendEvent(EventType.FetchSuccess);        }
+            sendEvent(EventType.FetchSuccess);
+        }
 
         @Override
         public void onFetchNoChange() {
@@ -996,11 +973,11 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     }
 
     /**
-     * Get the default React Native Messaging listener.
+     * Get the default Flutter Messaging listener.
      * Used by MainApplication to initialize Flurry Push for messaging,
      * when constructing the optional FlurryMarketingOptions.
      *
-     * @return the default React Native Messaging listener
+     * @return the default Flutter Messaging listener
      */
     public static FlurryMessagingListener getFlurryMessagingListener() {
         return new FlutterFlurryMessagingListener();
@@ -1019,8 +996,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             NotificationReceived("NotificationReceived"),
             NotificationClicked("NotificationClicked"),
             NotificationCancelled("NotificationCancelled"),
-            TokenRefresh("TokenRefresh"),
-            NonFlurryNotificationReceived("NonFlurryNotificationReceived");
+            TokenRefresh("TokenRefresh");
 
             private final String name;
 

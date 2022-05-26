@@ -43,7 +43,27 @@ A Flutter plugin for Flurry SDK
 
 - **Flurry Push**</br>
   In order to use [Flurry Push](https://developer.yahoo.com/flurry/docs/push/) for [Android](https://developer.yahoo.com/flurry/docs/push/integration/android/), please follow the additional steps below:
-  1. Android Flurry Push requires your projects to initialize Flurry from the native Application class. Please implement a custom application class if it does not exist by extending FlutterApplication, and apply the Flurry setup in the `onCreate()` method. Remember to register the class in the AndroidManifest by adding `android:name=".MyFlutterApplication"` to `<application>` attributes. With the same APIs as the JavaScript version.
+  1. Follow [Add Firebase to your Flutter app](https://firebase.google.com/docs/flutter/setup?platform=android). Complete "Add a Firebase configuration file" step for adding Firebase to your Android project. There should be a file `google-services.json` in your project's `android/app` folder now. You do not need to "Add FlutterFire plugins". Your `build.gradle` will look like:
+
+     ```groovy
+        // android/build.gradle (project-level)
+        buildscript {
+            dependencies {
+                classpath 'com.google.gms:google-services:4.3.10'
+            }
+        }
+     ```
+
+     ```groovy
+        // android/app/build.gradle (app-level)
+        apply plugin: 'com.google.gms.google-services'
+
+        dependencies {
+            implementation 'com.google.firebase:firebase-messaging:21.1.0'
+        }
+     ```
+
+  2. If you want to customize Flurry Push notification, please implement a custom application class if it does not exist by extending FlutterApplication, and apply the Flurry setup in the `onCreate()` method. Remember to register the class in the AndroidManifest by adding `android:name=".MyFlutterApplication"` to `<application>` attributes. With the same APIs as the Dart version.
 
      ```xml
      // AndroidManifest.xml
@@ -66,26 +86,6 @@ A Flutter plugin for Flurry SDK
                  .withLogLevel(Log.VERBOSE)
                  .withMessaging(true, options_or_listener) // optional user's native `FlurryMarketingOptions` or `FlurryMessagingListener`.
                  .build(this, FLURRY_ANDROID_API_KEY);
-     ```
-
-  2. Follow [Add Firebase to your Flutter app](https://firebase.google.com/docs/flutter/setup?platform=android). Complete "Add a Firebase configuration file" step for adding Firebase to your Android project. There should be a file `google-services.json` in your project's `android/app` folder now. You do not need to "Add FlutterFire plugins". Your `build.gradle` will look like:
-
-     ```groovy
-        // android/build.gradle (project-level)
-        buildscript {
-            dependencies {
-                classpath 'com.google.gms:google-services:4.3.10'
-            }
-        }
-     ```
-
-     ```groovy
-        // android/app/build.gradle (app-level)
-        apply plugin: 'com.google.gms.google-services'
-
-        dependencies {
-            implementation 'com.google.firebase:firebase-messaging:21.1.0'
-        }
      ```
 
   3. Set up "Android Authorization" in Flurry [Push Authorization](https://developer.yahoo.com/flurry/docs/push/authorization/).
@@ -155,13 +155,18 @@ A Flutter plugin for Flurry SDK
    Flurry.setReportLocation(true);
    
    // Set user properties.
+   var list = <String>[];
+   for (int i = 0; i < 6; i++) {
+     list.add('prop$i');
+   }
    Flurry.userProperties.setValue(UserProperties.propertyRegisteredUser, 'True');
+   Flurry.userProperties.addValues('Flutter Properties', list);
    
    // Log Flurry events.
    Flurry.logEvent('Flutter Event');
    var map = <String, String>{};
    for (int i = 0; i < 6; i++) {
-       map.putIfAbsent('$i', () => '$i');
+       map.putIfAbsent('key$i', () => '$i');
    }
    Flurry.logTimedEventWithParameters('Flutter Timed Event', map, true);
    ...
@@ -217,15 +222,15 @@ A Flutter plugin for Flurry SDK
 - `lib/messaging.dart`
 
    ```dart
-   // To enable Flurry Push for Android, please duplicate Builder setup in your
+   // To customize Flurry Push for Android, please duplicate Builder setup in your FlutterApplication.java.
    Flurry.builder
        .withMessaging(true)
-   ...
+       ...
    
    // Optionally add a listener to receive messaging events, and handle the notification.
    Flurry.builder
        .withMessaging(true, MyMessagingListener())
-   ...
+       ...
    
    class MyMessagingListener with MessagingListener {
        @override
@@ -253,10 +258,10 @@ A Flutter plugin for Flurry SDK
    
        static printMessage(String type, Message message) {
            print('Flurry Messaging Type: $type'
-               '\n    Title: $message.title'
-               '\n    Body: $message.body'
-               '\n    ClickAction: $message.clickAction'
-               '\n    Data: $message.appData');
+               '\n    Title: ${message.title}'
+               '\n    Body: ${message.body}'
+               '\n    ClickAction: ${message.clickAction}'
+               '\n    Data: ${message.appData}');
        }
    }
    ```
@@ -349,10 +354,10 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
 - **Methods to get Flurry versions and publisher segmentation**
 
   ```dart
-  int Flurry.getAgentVersion();
-  String Flurry.getReleaseVersion();
-  String Flurry.getSessionId();
-  String Flurry.getPlatformVersion();
+  Future<int>     Flurry.getAgentVersion();
+  Future<String?> Flurry.getReleaseVersion();
+  Future<String?> Flurry.getSessionId();
+  Future<String>  Flurry.getPlatformVersion();
 
   mixin PublisherSegmentationListener {
       void onFetched(Map<String, String> data);
@@ -361,9 +366,9 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
   // in Flurry.publisherSegmentation
   void registerListener  (PublisherSegmentationListener listener);
   void unregisterListener(PublisherSegmentationListener listener);
-  bool isFetchFinished();
+  Future<bool> isFetchFinished();
   void fetch();
-  Map<String, String> getPublisherData();
+  Future<Map<String, String>?> getPublisherData();
   ```
 
 - **Methods to log Flurry events**
@@ -379,23 +384,23 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
       eventParametersMismatched
   }
 
-  EventRecordStatus Flurry.logEvent(String eventId);
-  EventRecordStatus Flurry.logEventWithParameters(String eventId, Map<String, String> parameters);
-  EventRecordStatus Flurry.logTimedEvent(String eventId, bool timed);
-  EventRecordStatus Flurry.logTimedEventWithParamters(String eventId, Map<String, String> parameters, bool timed);
+  Future<EventRecordStatus> Flurry.logEvent(String eventId);
+  Future<EventRecordStatus> Flurry.logEventWithParameters(String eventId, Map<String, String> parameters);
+  Future<EventRecordStatus> Flurry.logTimedEvent(String eventId, bool timed);
+  Future<EventRecordStatus> Flurry.logTimedEventWithParamters(String eventId, Map<String, String> parameters, bool timed);
 
   void Flurry.endTimedEvent(String eventId);
   void Flurry.endTimedEventWithParameters(String eventId, Map<String, String> parameters);
 
-  EventRecordStatus Flurry.logStandardEvent(StandardEventId id, Param param);
+  Future<EventRecordStatus> Flurry.logStandardEvent(StandardEventId id, Param param);
 
   void Flurry.onError(String errorId, String message, String errorClass);
   void Flurry.onErrorWithParameters(String errorId, String message, String errorClass, Map<String, String> parameters);
 
   void Flurry.logBreadcrumb(String crashBreadcrumb);
   
-  EventRecordStatus Flurry.logPayment(String productName, String productId, int quantity, double price,
-                                      String currency, String transactionId, Map<String, String> parameters);
+  Future<EventRecordStatus> Flurry.logPayment(String productName, String productId, int quantity, double price,
+                                              String currency, String transactionId, Map<String, String> parameters);
   ```
 
 - **Methods to enable IAP reporting(iOS)**
@@ -433,7 +438,7 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
   void unregisterListener(ConfigListener listener);
   void fetchConfig();
   void activateConfig();
-  String getConfigString(String key, String defaultValue);
+  Future<String> getConfigString(String key, String defaultValue);
   ```
 
 - **Methods for Messaging Listener**

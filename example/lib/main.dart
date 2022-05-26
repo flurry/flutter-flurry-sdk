@@ -58,11 +58,11 @@ class FlurryExample {
   static const String FLURRY_ANDROID_API_KEY = 'C9R699NJWSMJVPQWJ273';
   static const String FLURRY_IOS_API_KEY     = 'RPBHT5CJFFJ9WCS3C5R6';
 
+  /// Init Flurry once as early as possible recommended in main.dart.
+  /// For each platform (Android, iOS) where the app runs you need to acquire a unique Flurry API Key.
+  /// i.e., you need two API keys if you are going to release the app on both Android and iOS platforms.
+  /// If you are building for TV platforms, you will need two API keys for Android TV and tvOS.
   static void init() {
-    // Init Flurry once as early as possible recommended in main.dart.
-    // For each platform (Android, iOS) where the app runs you need to acquire a unique Flurry API Key.
-    // i.e., you need two API keys if you are going to release the app on both Android and iOS platforms.
-    // If you are building for TV platforms, you will need two API keys for Android TV and tvOS.
     Flurry.builder
         .withCrashReporting(true)
         .withLogEnabled(true)
@@ -73,6 +73,7 @@ class FlurryExample {
                 iosAPIKey: FLURRY_IOS_API_KEY);
   }
 
+  /// Set, get, log Flurry events in anywhere of your codes.
   static void example() async {
     // Example to get Flurry versions.
     int agentVersion = await Flurry.getAgentVersion();
@@ -94,13 +95,19 @@ class FlurryExample {
     Flurry.setReportLocation(true);
 
     // Set user properties.
-    Flurry.userProperties.setValue(UserProperties.propertyRegisteredUser, 'True');
+    var list = <String>[];
+    for (int i = 0; i < 6; i++) {
+      list.add('prop$i');
+    }
+    Flurry.userProperties
+        .setValue(UserProperties.propertyRegisteredUser, 'True');
+    Flurry.userProperties.addValues('Flutter Properties', list);
 
     // Log Flurry events.
     Flurry.logEvent('Flutter Event');
     var map = <String, String>{};
     for (int i = 0; i < 6; i++) {
-      map.putIfAbsent('$i', () => '$i');
+      map.putIfAbsent('key$i', () => '$i');
     }
     Flurry.logTimedEventWithParameters('Flutter Timed Event', map, true);
     Flurry.endTimedEvent('Flutter Timed Event');
@@ -114,17 +121,21 @@ class FlurryExample {
     Flurry.logStandardEvent(FlurryEvent.purchased, paramBuilder);
   }
 
+  /// Example to get Flurry Remote Configurations.
   static void config() {
     Flurry.config.registerListener(MyConfigListener());
     Flurry.config.fetchConfig();
   }
 
+  /// Example to get Flurry Publisher Segmentation.
   static void publisherSegmentation() {
-    Flurry.publisherSegmentation.registerListener(MyPublisherSegmentationListener());
+    Flurry.publisherSegmentation
+        .registerListener(MyPublisherSegmentationListener());
     Flurry.publisherSegmentation.fetch();
   }
 }
 
+/// Listener for Flurry Remote Configurations
 class MyConfigListener with ConfigListener {
   @override
   void onFetchSuccess() {
@@ -135,7 +146,9 @@ class MyConfigListener with ConfigListener {
   @override
   void onFetchNoChange() {
     // Fetch finished, but data unchanged.
-    Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
+    Flurry.config
+        .getConfigString('welcome_message', 'Welcome')
+        .then((welcomeMessage) {
       print('Received unchanged data: $welcomeMessage');
     });
   }
@@ -149,12 +162,28 @@ class MyConfigListener with ConfigListener {
   @override
   void onActivateComplete(bool isCache) {
     // Received cached data, or newly activated data.
-    Flurry.config.getConfigString('welcome_message', 'Welcome').then((welcomeMessage) {
-      print((isCache ? 'Received cached data: $welcomeMessage' : 'Received newly activated data: $welcomeMessage'));
+    Flurry.config
+        .getConfigString('welcome_message', 'Welcome')
+        .then((welcomeMessage) {
+      print((isCache
+          ? 'Received cached data: $welcomeMessage'
+          : 'Received newly activated data: $welcomeMessage'));
     });
   }
 }
 
+/// To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication.java.
+/// ```dart
+///   Flurry.builder
+///       .withMessaging(true)
+///       ...
+/// ```
+/// Optionally add a listener to receive messaging events, and handle the notification.
+/// ```dart
+///   Flurry.builder
+///       .withMessaging(true, MyMessagingListener())
+///       ...
+/// ```
 class MyMessagingListener with MessagingListener {
   @override
   bool onNotificationClicked(Message message) {
@@ -174,20 +203,21 @@ class MyMessagingListener with MessagingListener {
   }
 
   @override
-  void onTokenRefresh(String token){
+  void onTokenRefresh(String token) {
     print('Flurry Messaging Type: onTokenRefresh'
         '\n    Token: $token');
   }
 
   static printMessage(String type, Message message) {
     print('Flurry Messaging Type: $type'
-        '\n    Title: $message.title'
-        '\n    Body: $message.body'
-        '\n    ClickAction: $message.clickAction'
-        '\n    Data: $message.appData');
+        '\n    Title: ${message.title}'
+        '\n    Body: ${message.body}'
+        '\n    ClickAction: ${message.clickAction}'
+        '\n    Data: ${message.appData}');
   }
 }
 
+/// Listener for Flurry Publisher Segmentation
 class MyPublisherSegmentationListener with PublisherSegmentationListener {
   @override
   void onFetched(Map<String, String> data) {

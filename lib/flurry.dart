@@ -34,6 +34,7 @@ enum EventRecordStatus {
   eventRecorded,
   eventUniqueCountExceeded,
   eventParamsCountExceeded,
+  eventLogCountExceeded,
   eventLoggingDelayed,
   eventAnalyticsDisabled,
   eventParametersMismatched
@@ -122,7 +123,7 @@ class Flurry {
     flurryAgent?.setSslPinningEnabled(sslPinningEnabled);
   }
 
-  /// Sends ccpa compliance data to Flurry.
+  /// Sends CCPA compliance data to Flurry.
   ///
   /// Opts out or opt in to data sale to third parties based boolean value of
   /// [isOptOut].
@@ -424,11 +425,11 @@ class Builder {
     }
   }
 
-  void build({String androidAPIKey = "", String iosAPIKey = ""}) {
+  void build({String androidAPIKey = '', String iosAPIKey = ''}) {
     if (builderAgent != null) {
       Map<String, dynamic> arguments = <String, dynamic>{};
-      arguments.putIfAbsent("androidAPIKey", () => androidAPIKey);
-      arguments.putIfAbsent("iosAPIKey", () => iosAPIKey);
+      arguments.putIfAbsent('androidAPIKey', () => androidAPIKey);
+      arguments.putIfAbsent('iosAPIKey', () => iosAPIKey);
       builderAgent!.build(arguments);
     }
   }
@@ -436,9 +437,9 @@ class Builder {
   /// Sets the app version.
   ///
   /// Explicitly specifies the [appVersion] that Flurry will use to group
-  /// Analytics data. Default is set to "1.0". Maximum of 605 versions allowed
+  /// Analytics data. Default is set to '1.0'. Maximum of 605 versions allowed
   /// per app.
-  Builder withAppVersion([String appVersion = "1.0"]) {
+  Builder withAppVersion([String appVersion = '1.0']) {
     builderAgent?.withAppVersion(appVersion);
     return this;
   }
@@ -525,12 +526,7 @@ class Builder {
         messagingAgent!.setListener(listener);
       }
 
-      if (Platform.isIOS) {
-        messagingAgent!.withMessaging();
-      } else {
-        print(
-            "To enable Flurry Push for Android, please duplicate Builder setup in your FlutterApplication class.");
-      }
+      messagingAgent!.withMessaging();
     }
     return this;
   }
@@ -542,23 +538,23 @@ class UserProperties {
   ///
   /// Follow ISO 4217: https://en.wikipedia.org/wiki/ISO_4217
   /// [](https://en.wikipedia.org/wiki/ISO_4217)
-  /// E.g., "USD", "EUR", "JPY", "CNY", ...
-  static const String propertyCurrencyPreference = "Flurry.CurrencyPreference";
+  /// E.g., 'USD', 'EUR', 'JPY', 'CNY', ...
+  static const String propertyCurrencyPreference = 'Flurry.CurrencyPreference';
 
   /// Standard User Property: Purchaser.
   ///
-  /// E.g., "true" or "false"
-  static const String propertyPurchaser = "Flurry.Purchaser";
+  /// E.g., 'true' or 'false'
+  static const String propertyPurchaser = 'Flurry.Purchaser';
 
   /// Standard User Property: Registered user.
   ///
-  /// E.g., "true" or "false"
-  static const String propertyRegisteredUser = "Flurry.RegisteredUser";
+  /// E.g., 'true' or 'false'
+  static const String propertyRegisteredUser = 'Flurry.RegisteredUser';
 
   /// Standard User Property: Subscriber.
   ///
-  /// E.g., "true" or "false"
-  static const String propertySubscriber = "Flurry.Subscriber";
+  /// E.g., 'true' or 'false'
+  static const String propertySubscriber = 'Flurry.Subscriber';
 
   // init static Flurry agent UserProperties object.
   static UserPropertiesAgent? userPropertiesAgent;
@@ -673,7 +669,7 @@ class Performance {
   ///   {
   ///       // profiled codes ...
   ///   }
-  ///   Flurry.Performance.LogResourceLogger("My ID");
+  ///   Flurry.Performance.LogResourceLogger('My ID');
   /// ```
   void startResourceLogger() {
     performanceAgent?.startResourceLogger();
@@ -742,7 +738,7 @@ mixin ConfigListener {
 
   /// Informs the app when an activation is done.
   ///
-  /// This notification is important in the "greedy" case of activation. An
+  /// This notification is important in the 'greedy' case of activation. An
   /// object may greedily call for activation and other objects may need to
   /// know to modify their state (or ignore this activation) in order to
   /// maintain a consistent user experience. [isCache] is true if activated
@@ -1191,7 +1187,7 @@ enum FlurryEvent {
   share,
 
   /// Log this event when a user likes a social content. e.g. likeType captures
-  /// what kind of like is logged ("celebrate", "insightful", etc).
+  /// what kind of like is logged ('celebrate', 'insightful', etc).
   ///
   /// Suggested event params : socialContentId, socialContentName, likeType
   ///

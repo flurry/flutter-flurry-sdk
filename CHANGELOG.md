@@ -3,6 +3,19 @@
 * [Flurry Android SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/android/)
 * [Flurry iOS SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/ios/)
 
+# v2.1.0 (2022-05-26)
+
+#### Features
+
+* Upgrade Flurry Android SDK version to 13.3.0
+* Upgrade Flurry iOS SDK version to 12.0.0
+* Support initializing Flurry Push from the Dart for Android
+
+#### Bug Fixes
+
+* Fix Flurry Push Unhandled Exception: type 'Null' is not a subtype of type 'String' in type cast
+* Fix example codes printing "Instance of" instead of values
+
 # v2.0.0 (2022-02-16)
 
 #### Features

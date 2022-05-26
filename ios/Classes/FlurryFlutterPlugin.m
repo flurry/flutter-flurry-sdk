@@ -17,7 +17,7 @@
 #endif
 
 NSString *originName = @"flutter-flurry-sdk";
-NSString *originVersion = @"1.1.0";
+NSString *originVersion = @"2.1.0";
 
 static FlurryFlutterPlugin* sharedInstance;
 
@@ -210,10 +210,6 @@ bool hasSetUpDummyListener_messaging = false;
     FlutterEventChannel *eventChannel_PS = [FlutterEventChannel eventChannelWithName:@"flurry_flutter_plugin_event_ps"
                                        binaryMessenger:[registrar messenger]];
     [eventChannel_PS setStreamHandler:[FlurryFlutterPlugin shared]];
-}
-
--(NSArray*) NSStringToArray:(NSString*) values {
-    return [values componentsSeparatedByString:@"\n"];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -424,7 +420,7 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(void) flurrySetContinueSessionMillis:(NSDictionary *)seconds {
     NSString* secondsStr = seconds[@"secondsStr"];
-    NSInteger secondsInt = [secondsStr integerValue];
+    int secondsInt = [secondsStr intValue];
     [Flurry setSessionContinueSeconds:secondsInt];
 }
 
@@ -441,9 +437,8 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(void) flurryAddUserPropertyValues:(NSDictionary *)userProperties {
     NSString* propertyName = userProperties[@"propertyName"];
-    NSString* propertyValuesStr = userProperties[@"propertyValuesStr"];
-    NSArray* propertyValueArray = [self NSStringToArray:propertyValuesStr];
-    [FlurryUserProperties add:propertyName values:propertyValueArray];
+    NSArray* propertyValues = userProperties[@"propertyValues"];
+    [FlurryUserProperties add:propertyName values:propertyValues];
 }
 
 -(void) flurryFlagUserProperty:(NSDictionary *)userProperties {
@@ -464,9 +459,8 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(void) flurryRemoveUserPropertyValues:(NSDictionary *)userProperties {
     NSString* propertyName = userProperties[@"propertyName"];
-    NSString* propertyValuesStr = userProperties[@"propertyValuesStr"];
-    NSArray* propertyValueArray = [self NSStringToArray:propertyValuesStr];
-    [FlurryUserProperties remove:propertyName values:propertyValueArray];
+    NSArray* propertyValues = userProperties[@"propertyValues"];
+    [FlurryUserProperties remove:propertyName values:propertyValues];
 }
 
 -(void) flurrySetUserPropertyValue:(NSDictionary *)userProperties {
@@ -477,9 +471,8 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(void) flurrySetUserPropertyValues:(NSDictionary *)userProperties {
     NSString* propertyName = userProperties[@"propertyName"];
-    NSString* propertyValuesStr = userProperties[@"propertyValuesStr"];
-    NSArray* propertyValueArray = [self NSStringToArray:propertyValuesStr];
-    [FlurryUserProperties set:propertyName values:propertyValueArray];
+    NSArray* propertyValues = userProperties[@"propertyValues"];
+    [FlurryUserProperties set:propertyName values:propertyValues];
 }
 
 -(void) flurryAddOrigin:(NSDictionary *)origin {
@@ -491,9 +484,7 @@ bool hasSetUpDummyListener_messaging = false;
 -(void) flurryAddOriginWithParameters:(NSDictionary *)origin {
     NSString* originName = origin[@"originName"];
     NSString* originVersion = origin[@"originVersion"];
-    NSString* paramaterKeys = origin[@"keysStr"];
-    NSString* parametersValue = origin[@"valuesStr"];
-    NSMutableDictionary* params = [self keyValueToDict:paramaterKeys values:parametersValue];
+    NSDictionary* params = origin[@"originParameters"];
 
     [Flurry addOrigin:originName withVersion:originVersion withParameters:params];
 }
@@ -501,7 +492,7 @@ bool hasSetUpDummyListener_messaging = false;
 -(void) flurryAddSessionProperty:(NSDictionary *)session {
     NSString* sessionName = session[@"name"];
     NSString* sessionValue = session[@"value"];
-    NSMutableDictionary* sessionDict = [self keyValueToDict:sessionName values:sessionValue];
+    NSDictionary* sessionDict = @{sessionName : sessionValue};
 
     [Flurry sessionProperties: sessionDict];
 }
@@ -517,9 +508,7 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(void) flurryEndTimedEventWithParameters:(NSDictionary*)event {
     NSString* eventId = event[@"eventId"];
-    NSString* keysStr = event[@"keysStr"];
-    NSString* valuesStr = event[@"valuesStr"];
-    NSMutableDictionary* params = [self keyValueToDict:keysStr values:valuesStr];
+    NSMutableDictionary* params = event[@"parameters"];
 
     [Flurry endTimedEvent:eventId withParameters: params];
 }
@@ -554,9 +543,7 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(NSInteger) flurryLogEventWithParameters:(NSDictionary*)event {
     NSString* eventId = event[@"eventId"];
-    NSString* keysStr = event[@"keysStr"];
-    NSString* valuesStr = event[@"valuesStr"];
-    NSMutableDictionary* params = [self keyValueToDict:keysStr values:valuesStr];
+    NSDictionary *params = event[@"parameters"];
     return [Flurry logEvent:eventId withParameters:params];
 }
 
@@ -567,9 +554,7 @@ bool hasSetUpDummyListener_messaging = false;
     double price = [payment[@"price"] doubleValue];
     NSString* currency = payment[@"currency"];
     NSString* transactionId = payment[@"transactionId"];
-    NSString* keysStr = payment[@"keysStr"];
-    NSString* valuesStr = payment[@"valuesStr"];
-    NSMutableDictionary* params = [self keyValueToDict:keysStr values:valuesStr];
+    NSDictionary* params = payment[@"parameters"];
     __block NSInteger transactionStatus = 0;
     [Flurry logPaymentTransactionWithTransactionId:transactionId productId:productId
     quantity:quantity price:price currency:currency productName:productName
@@ -588,10 +573,8 @@ bool hasSetUpDummyListener_messaging = false;
 
 -(NSInteger) flurryLogTimedEventWithParameters:(NSDictionary*)event {
     NSString* eventId = event[@"eventId"];
-    NSString* keysStr = event[@"keysStr"];
-    NSString* valuesStr = event[@"valuesStr"];
     BOOL timed = event[@"timed"];
-    NSMutableDictionary* params = [self keyValueToDict:keysStr values:valuesStr];
+    NSDictionary* params = event[@"parameters"];
     
     return [Flurry logEvent:eventId withParameters:params timed:timed];
 }
@@ -612,9 +595,7 @@ bool hasSetUpDummyListener_messaging = false;
     NSString* errorId = errorDict[@"errorId"];
     NSString* message = errorDict[@"message"];
     NSString* errorClass = errorDict[@"errorClass"];
-    NSString* keysStr = errorDict[@"keysStr"];
-    NSString* valuesStr = errorDict[@"valuesStr"];
-    NSMutableDictionary* params = [self keyValueToDict:keysStr values:valuesStr];
+    NSDictionary* params = errorDict[@"parameters"];
     
     NSError *error = nil;
     if (errorClass != nil) {
@@ -777,23 +758,6 @@ bool hasSetUpDummyListener_messaging = false;
     }
 }
 #endif
-
--(NSMutableDictionary*) keyValueToDict:(NSString*)keys values:(NSString*)values {
-    if(!keys || !values) {
-        return nil;
-    }
-
-    NSMutableDictionary* dict = [[NSMutableDictionary alloc] init];
-
-    NSArray* keysArray = [keys componentsSeparatedByString: @"\n"];
-    NSArray* valuesArray = [values componentsSeparatedByString: @"\n"];
-
-    for(int i = 0; i < [keysArray count]; i++) {
-        [dict setObject:[valuesArray objectAtIndex: i] forKey:[keysArray objectAtIndex:i]];
-    }
-
-    return dict;
-}
 
 
 @end
