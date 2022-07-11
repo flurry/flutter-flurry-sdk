@@ -1,23 +1,17 @@
 #import "FlurryFlutterPlugin.h"
-#import "FlurryCCPA.h"
-#import "FlurryUserProperties.h"
-#import "Flurry.h"
-#import "Flurry+Event.h"
 
-#if __has_include("FlurryMessaging.h")
-#import "FlurryMessaging.h"
+#import <Flurry_iOS_SDK/Flurry_iOS_SDK.h>
+
+#if __has_include(<Flurry_Messaging/Flurry_Messaging.h>)
+#import <Flurry_Messaging/Flurry_Messaging.h>
 #endif
 
-#if __has_include(<StoreKit/SKAdNetwork.h>)
-#import "FlurrySKAdNetwork.h"
-#endif
-
-#if __has_include("FConfig.h")
-#import "FConfig.h"
+#if __has_include(<Flurry_Config/Flurry_Config.h>)
+#import <Flurry_Config/Flurry_Config.h>
 #endif
 
 NSString *originName = @"flutter-flurry-sdk";
-NSString *originVersion = @"2.1.0";
+NSString *originVersion = @"2.2.0";
 
 static FlurryFlutterPlugin* sharedInstance;
 
@@ -34,11 +28,11 @@ FlurrySessionBuilder* builder;
 bool FlurryLogEnabled = true;
 bool hasSetUpDummyListener_messaging = false;
 
-#if __has_include("FlurryMessaging.h") && __has_include("FConfig.h")
+#if __has_include(<Flurry_Config/Flurry_Config.h>) && __has_include(<Flurry_Messaging/Flurry_Messaging.h>)
 @interface FlurryFlutterPlugin()<FlurryMessagingDelegate, FConfigObserver, FlurryFetchObserver>
-#elif __has_include("FlurryMessaging.h")
+#elif __has_include(<Flurry_Messaging/Flurry_Messaging.h>)
 @interface FlurryFlutterPlugin()<FlurryMessagingDelegate>
-#elif __has_include("FConfig.h")
+#elif __has_include(<Flurry_Config/Flurry_Config.h>)
 @interface FlurryFlutterPlugin()<FConfigObserver>
 #else
 @interface FlurryFlutterPlugin()
@@ -72,7 +66,7 @@ bool hasSetUpDummyListener_messaging = false;
 #pragma mark - FlurryMessaging
 
 - (void) flurrySetAutoIntegrationForMessaging {
-    #if __has_include("FlurryMessaging.h")
+    #if __has_include(<Flurry_Messaging/Flurry_Messaging.h>)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         if(!hasSetUpDummyListener_messaging){
@@ -86,7 +80,7 @@ bool hasSetUpDummyListener_messaging = false;
 }
 
 - (void) flurrySetMessagingDelegate{
-#if __has_include("FlurryMessaging.h")
+#if __has_include(<Flurry_Messaging/Flurry_Messaging.h>)
     if(!hasSetUpDummyListener_messaging){
         [FlurryMessaging setMessagingDelegate:[FlurryFlutterPlugin shared]];
         hasSetUpDummyListener_messaging = !hasSetUpDummyListener_messaging;
@@ -96,7 +90,7 @@ bool hasSetUpDummyListener_messaging = false;
 }
 
 #pragma mark - FlurryMessageDelegate
-#if __has_include("FlurryMessaging.h")
+#if __has_include(<Flurry_Messaging/Flurry_Messaging.h>)
 - (void) didReceiveMessage:(nonnull FlurryMessage*)message {
     NSLog(@"didReceiveMessage = %@", [message description]);
 
@@ -138,7 +132,7 @@ bool hasSetUpDummyListener_messaging = false;
 #pragma mark - FluryConfig
 
 - (void)flurryRegisterConfigListener{
-#if __has_include("FConfig.h")
+#if __has_include(<Flurry_Config/Flurry_Config.h>)
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [[FConfig sharedInstance] registerObserver:[FlurryFlutterPlugin shared] withExecutionQueue:dispatch_get_main_queue()];
@@ -147,13 +141,13 @@ bool hasSetUpDummyListener_messaging = false;
 }
 
 - (void)flurryFetchConfig{
-#if __has_include("FConfig.h")
+#if __has_include(<Flurry_Config/Flurry_Config.h>)
     [[FConfig sharedInstance] fetchConfig];
 #endif
 }
 
 - (void)flurryActivateConfig{
-#if __has_include("FConfig.h")
+#if __has_include(<Flurry_Config/Flurry_Config.h>)
     [[FConfig sharedInstance] activateConfig];
 #endif
 }
@@ -166,7 +160,7 @@ bool hasSetUpDummyListener_messaging = false;
     return value;
 }
 
-#if __has_include("FConfig.h")
+#if __has_include(<Flurry_Config/Flurry_Config.h>)
 
 - (void) fetchComplete{
     NSDictionary *msg = @{@"type" : kConfigFetchCompleteMessage};

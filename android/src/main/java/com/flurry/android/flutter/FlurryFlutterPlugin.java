@@ -54,7 +54,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static final String TAG = "FlurryFlutterPlugin";
 
     private static final String ORIGIN_NAME = "flutter-flurry-sdk";
-    private static final String ORIGIN_VERSION = "2.1.0";
+    private static final String ORIGIN_VERSION = "2.2.0";
 
     private Context context;
 
