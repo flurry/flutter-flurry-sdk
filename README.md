@@ -92,15 +92,21 @@ A Flutter plugin for Flurry SDK
 
 ### iOS
 
+- Define a global platform for your project in `Podfile`.
+
+     ```groovy
+     platform :ios, '10.0'
+     ```
+
 - **Flurry Push**</br>
   To set up Flurry Push, please take the following steps.
 
   1. Open your `.xcworkspace` file which is under the `ios` folder. Go to "Capabilities" tab and enable Push Notifications.
-     ![push_ios_1](https://github.com/flurry/flutter-flurry-sdk/raw/main/images/push_ios_1.png)
+     ![push_ios_1](https://github.com/flurry/flutter-flurry-sdk/raw/master/images/push_ios_1.png)
   2. Enable Background Modes (Background Fetch and Remote Notifications turned on).
-     ![push_ios_2](https://github.com/flurry/flutter-flurry-sdk/raw/main/images/push_ios_2.png)
+     ![push_ios_2](https://github.com/flurry/flutter-flurry-sdk/raw/master/images/push_ios_2.png)
      Now your `Info.plist` should contain the following items. For more information, please see [Push Setup](https://developer.yahoo.com/flurry/docs/push/integration/ios/).
-     ![push_ios_3](https://github.com/flurry/flutter-flurry-sdk/raw/main/images/push_ios_3.png)
+     ![push_ios_3](https://github.com/flurry/flutter-flurry-sdk/raw/master/images/push_ios_3.png)
   3. Set up "iOS Authorization" in Flurry [Push Authorization](https://developer.yahoo.com/flurry/docs/push/authorization/).
 
 ### tvOS
@@ -447,8 +453,8 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
   mixin MessagingListener{
       bool onNotificationReceived(Message message);  
       bool onNotificationClicked(Message message);
-      void onNotificationCancelled(Message message);
-      void onTokenRefresh(String token);
+      void onNotificationCancelled(Message message); // Android only
+      void onTokenRefresh(String token); // Android only
   }
 
   class Message {

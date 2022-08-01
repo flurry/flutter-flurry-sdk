@@ -3,7 +3,13 @@
 * [Flurry Android SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/android/)
 * [Flurry iOS SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/ios/)
 
-# v2.2.0 (2022-07-12)
+### v2.2.1 (2022-08-02)
+
+#### Bug Fixes
+
+* Fix iOS CocoaPods build failures
+
+## v2.2.0 (2022-07-12)
 
 #### Features
 
@@ -13,7 +19,7 @@
 
 * Fix iOS CocoaPods build failures
 
-# v2.1.0 (2022-05-26)
+## v2.1.0 (2022-05-26)
 
 #### Features
 
