@@ -131,6 +131,7 @@ A Flutter plugin for Flurry SDK
        .withCrashReporting(true)
        .withLogEnabled(true)
        .withLogLevel(LogLevel.debug)
+       .withReportLocation(true)
        .build(
            androidAPIKey: FLURRY_ANDROID_API_KEY,
                iosAPIKey: FLURRY_IOS_API_KEY);
@@ -301,6 +302,7 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
   Builder withIncludeBackgroundSessionsInMetrics(bool includeBackgroundSessionsInMetrics);
   Builder withLogEnabled(bool enableLog);
   Builder withLogLevel(LogLevel logLevel); // LogLevel = { verbose, debug, info, warn, error, assertion }
+  Builder withReportLocation(bool reportLocation); // Android only
   Builder withMessaging(bool enableMessaging, MessagingListener listener);
   Builder withPerformanceMetrics(int performanceMetrics); // Performance = { none, coldStart, screenTime, all }
   Builder withSslPinningEnabled(bool sslPinningEnabled); // Android only

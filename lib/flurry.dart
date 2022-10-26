@@ -496,6 +496,12 @@ class Builder {
     return this;
   }
 
+  /// Sets user's preference to allow Flurry to record location via GPS.
+  Builder withReportLocation([bool reportLocation = true]) {
+    builderAgent?.withReportLocation(reportLocation);
+    return this;
+  }
+
   /// Sets flag for performance metrics reporting.
   Builder withPerformanceMetrics([int performanceMetrics = Performance.all]) {
     builderAgent?.withPerformanceMetrics(performanceMetrics);

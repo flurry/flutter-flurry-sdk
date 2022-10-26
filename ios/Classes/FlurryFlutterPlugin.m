@@ -11,7 +11,7 @@
 #endif
 
 NSString *originName = @"flutter-flurry-sdk";
-NSString *originVersion = @"2.2.1";
+NSString *originVersion = @"3.0.0";
 
 static FlurryFlutterPlugin* sharedInstance;
 

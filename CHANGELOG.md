@@ -3,6 +3,14 @@
 * [Flurry Android SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/android/)
 * [Flurry iOS SDK Release Notes](https://developer.yahoo.com/flurry/docs/releasenotes/ios/)
 
+# v3.0.0 (2022-10-26)
+
+#### Features
+
+* Upgrade Flurry Android SDK version to 14.0.0
+* Migrate to comply with JDK 11 and Gradle 7
+* Upgrade target SDK to Android 13 (API level 33)
+
 ### v2.2.1 (2022-08-02)
 
 #### Bug Fixes

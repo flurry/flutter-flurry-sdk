@@ -67,6 +67,7 @@ class FlurryExample {
         .withCrashReporting(true)
         .withLogEnabled(true)
         .withLogLevel(LogLevel.debug)
+        .withReportLocation(true)
         .withMessaging(true, MyMessagingListener())
         .build(
             androidAPIKey: FLURRY_ANDROID_API_KEY,

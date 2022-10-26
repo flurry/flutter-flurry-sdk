@@ -54,7 +54,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static final String TAG = "FlurryFlutterPlugin";
 
     private static final String ORIGIN_NAME = "flutter-flurry-sdk";
-    private static final String ORIGIN_VERSION = "2.2.1";
+    private static final String ORIGIN_VERSION = "3.0.0";
 
     private Context context;
 
@@ -190,6 +190,10 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 String logLevelStr = call.argument("logLevelStr");
                 withLogLevel(logLevelStr);
                 break;
+            case "withReportLocation":
+                boolean reportLocation = call.<Boolean>argument("reportLocation");
+                builder.withReportLocation(reportLocation);
+                break;
             case "withPerformanceMetrics":
                 int performanceMetrics = call.<Integer>argument("performanceMetrics");
                 withPerformanceMetrics(performanceMetrics);
@@ -286,7 +290,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 }
                 break;
             case "setReportLocation":
-                boolean reportLocation = call.<Boolean>argument("reportLocation");
+                reportLocation = call.<Boolean>argument("reportLocation");
                 setReportLocation(reportLocation);
                 break;
             case "setSessionOrigin":
@@ -457,11 +461,12 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
 
     public void initializeFlurryBuilder() {
         builder = new FlurryAgent.Builder();
+        builder.withSessionForceStart(true)
+               .withReportLocation(true);
     }
 
     public void buildFlurryBuilder(String apiKey) {
         FlurryAgent.addOrigin(ORIGIN_NAME, ORIGIN_VERSION);
-        builder.withSessionForceStart(true);
         builder.build(context, apiKey);
     }
 

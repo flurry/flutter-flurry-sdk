@@ -359,6 +359,15 @@ class BuilderAgent {
         'withLogLevel', <String, dynamic>{'logLevelStr': logLevelStr});
   }
 
+  void withReportLocation(bool reportLocation) {
+    if (Platform.isIOS) {
+      print('Flurry iOS SDK does not implement withReportLocation method');
+    } else {
+      _agentBuilderChannel.invokeMethod('withReportLocation',
+          <String, dynamic>{'reportLocation': reportLocation});
+    }
+  }
+
   void withPerformanceMetrics(int performanceMetrics) {
     if (Platform.isIOS) {
       print('Flurry iOS SDK does not implement withPerformanceMetrics method');
