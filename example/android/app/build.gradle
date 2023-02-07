@@ -26,13 +26,13 @@ apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion flutter.compileSdkVersion
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.flutter_flurry_sdk_example"
-        minSdkVersion 16
-        targetSdkVersion 33
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -53,8 +53,8 @@ flutter {
 dependencies {
     // implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
-    implementation 'com.flurry.android:analytics:14.0.0'
-    implementation 'com.flurry.android:marketing:14.0.0'
+    implementation 'com.flurry.android:analytics:14.1.0'
+    implementation 'com.flurry.android:marketing:14.1.0'
 
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'com.google.firebase:firebase-messaging:21.1.0'

@@ -239,6 +239,14 @@ class FlurryAgent {
     }
   }
 
+  void setGppConsent(String gppString, Set<int> gppSectionIds) {
+    _agentChannel.invokeMethod(
+        'setGppConsent', <String, dynamic>{
+      'gppString': gppString,
+      'gppSectionIds': gppSectionIds.toList()
+    });
+  }
+
   void setDataSaleOptOut(bool isOptOut) {
     _agentChannel.invokeMethod(
         'setDataSaleOptOut', <String, dynamic>{'isOptOut': isOptOut});
@@ -332,6 +340,14 @@ class BuilderAgent {
   void withCrashReporting(bool crashReporting) {
     _agentBuilderChannel.invokeMethod('withCrashReporting',
         <String, dynamic>{'crashReporting': crashReporting});
+  }
+
+  void withGppConsent(String gppString, Set<int> gppSectionIds) {
+    _agentBuilderChannel.invokeMethod(
+        'withGppConsent', <String, dynamic>{
+      'gppString': gppString,
+      'gppSectionIds': gppSectionIds.toList()
+    });
   }
 
   void withDataSaleOptOut(bool isOptOut) {

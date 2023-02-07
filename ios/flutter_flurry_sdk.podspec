@@ -3,7 +3,7 @@
 # Run `pod lib lint flutter_flurry_sdk.podspec` to validate before publishing.
 #
 
-sdkVersion = '12.1.1'
+sdkVersion = '12.2.0'
 
 Pod::Spec.new do |s|
   s.name             = 'flutter_flurry_sdk'

@@ -298,6 +298,7 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
   Builder withAppVersion(String versionName);  // iOS only. For Android, please use Flurry.setVersionName() instead.
   Builder withContinueSessionMillis(int sessionMillis);
   Builder withCrashReporting(bool crashReporting);
+  Builder.withGppConsent(String gppString, Set<int> gppSectionIds);
   Builder withDataSaleOptOut(bool isOptOut);
   Builder withIncludeBackgroundSessionsInMetrics(bool includeBackgroundSessionsInMetrics);
   Builder withLogEnabled(bool enableLog);
@@ -339,6 +340,7 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
 - **Methods to set privacy preferences**
 
   ```dart
+  void Flurry.setGppConsent(String gppString, Set<int> gppSectionIds);
   void Flurry.setDataSaleOptOut(bool isOptOut);
   void Flurry.deleteData();
   void Flurry.openPrivacyDashboard();

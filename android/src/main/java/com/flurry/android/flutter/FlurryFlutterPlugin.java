@@ -38,6 +38,7 @@ import com.flurry.android.marketing.messaging.FlurryMessagingListener;
 import com.flurry.android.marketing.messaging.notification.FlurryMessage;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static final String TAG = "FlurryFlutterPlugin";
 
     private static final String ORIGIN_NAME = "flutter-flurry-sdk";
-    private static final String ORIGIN_VERSION = "3.0.0";
+    private static final String ORIGIN_VERSION = "3.1.0";
 
     private Context context;
 
@@ -173,6 +174,11 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
             case "withCrashReporting":
                 boolean crashReporting = call.<Boolean>argument("crashReporting");
                 withCrashReporting(crashReporting);
+                break;
+            case "withGppConsent":
+                String gppString = call.argument("gppString");
+                List<Integer> gppSectionIds = call.argument("gppSectionIds");
+                builder.withGppConsent(gppString, new HashSet<>(gppSectionIds));
                 break;
             case "withDataSaleOptOut":
                 boolean isOptOut = call.<Boolean>argument("isOptOut");
@@ -324,6 +330,11 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 break;
             case "setIAPReportingEnabled":
                 setIAPReportingEnabled();
+                break;
+            case "setGppConsent":
+                gppString = call.argument("gppString");
+                gppSectionIds = call.argument("gppSectionIds");
+                FlurryAgent.setGppConsent(gppString, new HashSet<>(gppSectionIds));
                 break;
             case "setDataSaleOptOut":
                 isOptOut = call.<Boolean>argument("isOptOut");

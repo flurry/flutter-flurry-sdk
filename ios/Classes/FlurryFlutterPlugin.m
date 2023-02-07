@@ -11,7 +11,7 @@
 #endif
 
 NSString *originName = @"flutter-flurry-sdk";
-NSString *originVersion = @"3.0.0";
+NSString *originVersion = @"3.1.0";
 
 static FlurryFlutterPlugin* sharedInstance;
 
@@ -219,6 +219,8 @@ bool hasSetUpDummyListener_messaging = false;
       [self flurryWithAppVersion:call.arguments];
   } else if ([@"withContinueSessionMillis" isEqualToString:call.method]) {
       [self flurryWithSessionContinueSeconds:call.arguments];
+  } else if([@"withGppConsent" isEqualToString:call.method]) {
+      [self flurryWithGppConsent:call.arguments];
   } else if([@"withDataSaleOptOut" isEqualToString:call.method]) {
       [self flurryWithDataSaleOptOut:call.arguments];
   } else if([@"withIncludeBackgroundSessionsInMetrics" isEqualToString:call.method]) {
@@ -296,6 +298,8 @@ bool hasSetUpDummyListener_messaging = false;
       [self flurrySetAge:call.arguments];
   } else if([@"setGender" isEqualToString:call.method]) {
       [self flurrySetGender:call.arguments];
+  } else if([@"setGppConsent" isEqualToString:call.method]) {
+      [self flurrySetGppConsent:call.arguments];
   } else if([@"setDataSaleOptOut" isEqualToString:call.method]) {
       [self flurrySetDataSaleOptOut:call.arguments];
   } else if([@"setIAPReportingEnabled" isEqualToString:call.method]) {
@@ -371,6 +375,12 @@ bool hasSetUpDummyListener_messaging = false;
     NSString* secondsStr = seconds[@"secondsStr"];
     NSInteger secondsInt = [secondsStr integerValue];
     [builder withSessionContinueSeconds:secondsInt];
+}
+
+-(void) flurryWithGppConsent:(NSDictionary *)gppConsent {
+    NSString* gppString = gppConsent[@"gppString"];
+    NSArray* gppSectionIds = gppConsent[@"gppSectionIds"];
+    [builder withGppConsent:gppString gppSectionIds:gppSectionIds];
 }
 
 -(void) flurryWithDataSaleOptOut:(NSDictionary*)optOut {
@@ -614,6 +624,12 @@ bool hasSetUpDummyListener_messaging = false;
 -(void) flurrySetGender:(NSDictionary*)genderDict {
     NSString* gender = genderDict[@"gender"];
     [Flurry setGender:gender];
+}
+
+-(void) flurrySetGppConsent:(NSDictionary *)gppConsent {
+    NSString* gppString = gppConsent[@"gppString"];
+    NSArray* gppSectionIds = gppConsent[@"gppSectionIds"];
+    [Flurry setGppConsent:gppString gppSectionIds:gppSectionIds];
 }
 
 -(void) flurrySetDataSaleOptOut:(NSDictionary*)optOut {

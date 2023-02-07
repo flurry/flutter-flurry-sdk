@@ -123,6 +123,14 @@ class Flurry {
     flurryAgent?.setSslPinningEnabled(sslPinningEnabled);
   }
 
+  /// Set Flurry Consent for the IAB Global Privacy Platform (GPP). To pass an IAB string to Flurry.
+  ///
+  /// Set Flurry Consent for the IAB Global Privacy Platform (GPP) with the GPP string of
+  /// [gppString], and the GPP section IDs of [gppSectionIds].
+  static void setGppConsent(String gppString, Set<int> gppSectionIds) {
+    flurryAgent?.setGppConsent(gppString, gppSectionIds);
+  }
+
   /// Sends CCPA compliance data to Flurry.
   ///
   /// Opts out or opt in to data sale to third parties based boolean value of
@@ -459,6 +467,15 @@ class Builder {
   /// enabled. Default value is set to true.
   Builder withCrashReporting([bool crashReporting = true]) {
     builderAgent?.withCrashReporting(crashReporting);
+    return this;
+  }
+
+  /// Set Flurry Consent for the IAB Global Privacy Platform (GPP). To pass an IAB string to Flurry.
+  ///
+  /// Set Flurry Consent for the IAB Global Privacy Platform (GPP) with the GPP string of
+  /// [gppString], and the GPP section IDs of [gppSectionIds].
+  Builder withGppConsent(String gppString, Set<int> gppSectionIds) {
+    builderAgent?.withGppConsent(gppString, gppSectionIds);
     return this;
   }
 
