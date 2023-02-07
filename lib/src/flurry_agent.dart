@@ -240,8 +240,7 @@ class FlurryAgent {
   }
 
   void setGppConsent(String gppString, Set<int> gppSectionIds) {
-    _agentChannel.invokeMethod(
-        'setGppConsent', <String, dynamic>{
+    _agentChannel.invokeMethod('setGppConsent', <String, dynamic>{
       'gppString': gppString,
       'gppSectionIds': gppSectionIds.toList()
     });
@@ -343,8 +342,7 @@ class BuilderAgent {
   }
 
   void withGppConsent(String gppString, Set<int> gppSectionIds) {
-    _agentBuilderChannel.invokeMethod(
-        'withGppConsent', <String, dynamic>{
+    _agentBuilderChannel.invokeMethod('withGppConsent', <String, dynamic>{
       'gppString': gppString,
       'gppSectionIds': gppSectionIds.toList()
     });
