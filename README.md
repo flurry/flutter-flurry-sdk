@@ -88,7 +88,13 @@ A Flutter plugin for Flurry SDK
                  .build(this, FLURRY_ANDROID_API_KEY);
      ```
 
-  3. Set up "Android Authorization" in Flurry [Push Authorization](https://developer.yahoo.com/flurry/docs/push/authorization/).
+  3. Add notification permission in the Android manifest file. (required on the Android 13 and above devices.)
+
+       ```xml
+        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+     ```
+     
+  4. Set up "Android Authorization" in Flurry [Push Authorization](https://developer.yahoo.com/flurry/docs/push/authorization/).
 
 ### iOS
 
@@ -103,10 +109,12 @@ A Flutter plugin for Flurry SDK
 
   1. Open your `.xcworkspace` file which is under the `ios` folder. Go to "Capabilities" tab and enable Push Notifications.
      ![push_ios_1](https://github.com/flurry/flutter-flurry-sdk/raw/master/images/push_ios_1.png)
+
   2. Enable Background Modes (Background Fetch and Remote Notifications turned on).
      ![push_ios_2](https://github.com/flurry/flutter-flurry-sdk/raw/master/images/push_ios_2.png)
      Now your `Info.plist` should contain the following items. For more information, please see [Push Setup](https://developer.yahoo.com/flurry/docs/push/integration/ios/).
      ![push_ios_3](https://github.com/flurry/flutter-flurry-sdk/raw/master/images/push_ios_3.png)
+
   3. Set up "iOS Authorization" in Flurry [Push Authorization](https://developer.yahoo.com/flurry/docs/push/authorization/).
 
 ### tvOS
