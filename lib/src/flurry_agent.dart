@@ -105,17 +105,6 @@ class FlurryAgent {
     _agentChannel.invokeMethod('deleteData');
   }
 
-  void endTimedEvent(String eventId) {
-    _agentChannel
-        .invokeMethod('endTimedEvent', <String, dynamic>{'eventId': eventId});
-  }
-
-  void endTimedEventWithParameters(
-      String eventId, Map<String, String> parameters) {
-    _agentChannel.invokeMethod('endTimedEventWithParameters',
-        <String, dynamic>{'eventId': eventId, 'parameters': parameters});
-  }
-
   Future<int> getAgentVersion() async {
     return await _agentChannel.invokeMethod('getAgentVersion');
   }
@@ -144,25 +133,6 @@ class FlurryAgent {
         <String, dynamic>{'eventId': eventId, 'parameters': parameters});
   }
 
-  Future<int> logPayment(
-      String productName,
-      String productId,
-      int quantity,
-      double price,
-      String currency,
-      String transactionId,
-      Map<String, String> parameters) async {
-    return await _agentChannel.invokeMethod('logPayment', <String, dynamic>{
-      'productName': productName,
-      'productId': productId,
-      'quantity': quantity,
-      'price': price,
-      'currency': currency,
-      'transactionId': transactionId,
-      'parameters': parameters
-    });
-  }
-
   Future<int> logTimedEvent(String eventId, bool timed) async {
     return await _agentChannel.invokeMethod(
         'logTimedEvent', <String, dynamic>{'eventId': eventId, 'timed': timed});
@@ -175,6 +145,47 @@ class FlurryAgent {
       'eventId': eventId,
       'parameters': parameters,
       'timed': timed
+    });
+  }
+
+  Future<int> logTimedEventId(String eventId, String timedId) async {
+    return await _agentChannel.invokeMethod('logTimedEventId',
+        <String, dynamic>{'eventId': eventId, 'timedId': timedId});
+  }
+
+  Future<int> logTimedEventIdWithParameters(
+      String eventId, Map<String, String> parameters, String timedId) async {
+    return await _agentChannel.invokeMethod(
+        'logTimedEventIdWithParameters', <String, dynamic>{
+      'eventId': eventId,
+      'parameters': parameters,
+      'timedId': timedId
+    });
+  }
+
+  void endTimedEvent(String eventId) {
+    _agentChannel
+        .invokeMethod('endTimedEvent', <String, dynamic>{'eventId': eventId});
+  }
+
+  void endTimedEventWithParameters(
+      String eventId, Map<String, String> parameters) {
+    _agentChannel.invokeMethod('endTimedEventWithParameters',
+        <String, dynamic>{'eventId': eventId, 'parameters': parameters});
+  }
+
+  void endTimedEventId(String eventId, String timedId) {
+    _agentChannel.invokeMethod('endTimedEventId',
+        <String, dynamic>{'eventId': eventId, 'timedId': timedId});
+  }
+
+  void endTimedEventIdWithParameters(
+      String eventId, Map<String, String> parameters, String timedId) {
+    _agentChannel.invokeMethod(
+        'endTimedEventIdWithParameters', <String, dynamic>{
+      'eventId': eventId,
+      'parameters': parameters,
+      'timedId': timedId
     });
   }
 
@@ -199,6 +210,25 @@ class FlurryAgent {
       'id': id.index,
       'flurryParam': flurryParamMap,
       'userParam': userParamMap
+    });
+  }
+
+  Future<int> logPayment(
+      String productName,
+      String productId,
+      int quantity,
+      double price,
+      String currency,
+      String transactionId,
+      Map<String, String> parameters) async {
+    return await _agentChannel.invokeMethod('logPayment', <String, dynamic>{
+      'productName': productName,
+      'productId': productId,
+      'quantity': quantity,
+      'price': price,
+      'currency': currency,
+      'transactionId': transactionId,
+      'parameters': parameters
     });
   }
 

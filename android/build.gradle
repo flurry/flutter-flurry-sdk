@@ -22,6 +22,8 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace "com.flurry.android.flutter"
+
     compileSdkVersion 33
 
     defaultConfig {
@@ -32,6 +34,6 @@ android {
 dependencies {
     // implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
-    implementation 'com.flurry.android:analytics:14.2.0'
-    implementation 'com.flurry.android:marketing:14.2.0'
+    implementation 'com.flurry.android:analytics:14.4.0'
+    implementation 'com.flurry.android:marketing:14.4.0'
 }

@@ -1,16 +1,16 @@
 PODS:
-  - Flurry-iOS-SDK/CrashReporter (12.2.0)
-  - Flurry-iOS-SDK/FlurryConfig (12.2.0):
+  - Flurry-iOS-SDK/CrashReporter (12.4.0)
+  - Flurry-iOS-SDK/FlurryConfig (12.4.0):
     - Flurry-iOS-SDK/FlurrySDK
-  - Flurry-iOS-SDK/FlurryMessaging (12.2.0):
+  - Flurry-iOS-SDK/FlurryMessaging (12.4.0):
     - Flurry-iOS-SDK/FlurrySDK
-  - Flurry-iOS-SDK/FlurrySDK (12.2.0):
+  - Flurry-iOS-SDK/FlurrySDK (12.4.0):
     - Flurry-iOS-SDK/CrashReporter
   - Flutter (1.0.0)
   - flutter_flurry_sdk (0.0.1):
-    - Flurry-iOS-SDK/FlurryConfig (~> 12.2.0)
-    - Flurry-iOS-SDK/FlurryMessaging (~> 12.2.0)
-    - Flurry-iOS-SDK/FlurrySDK (~> 12.2.0)
+    - Flurry-iOS-SDK/FlurryConfig (~> 12.4.0)
+    - Flurry-iOS-SDK/FlurryMessaging (~> 12.4.0)
+    - Flurry-iOS-SDK/FlurrySDK (~> 12.4.0)
     - Flutter
 
 DEPENDENCIES:
@@ -28,9 +28,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_flurry_sdk/ios"
 
 SPEC CHECKSUMS:
-  Flurry-iOS-SDK: acac6eb6761fc39f7accbf1f8c4859ef297c7ee9
+  Flurry-iOS-SDK: 402045d874e9e330d2fbcdf48d82727292ade109
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_flurry_sdk: 1fe3874c8fd55c820d0563fa0297930ed74e35b9
+  flutter_flurry_sdk: 5693523848e564298997124810571f0d93590d09
 
 PODFILE CHECKSUM: 1d5103e59c34489a395ae7f46690437f27451f42
 

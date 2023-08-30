@@ -11,7 +11,7 @@
 #endif
 
 NSString *originName = @"flutter-flurry-sdk";
-NSString *originVersion = @"3.2.0";
+NSString *originVersion = @"3.3.0";
 
 static FlurryFlutterPlugin* sharedInstance;
 
@@ -259,10 +259,6 @@ bool hasSetUpDummyListener_messaging = false;
       [self flurryAddSessionProperty:call.arguments];
   } else if([@"deleteData" isEqualToString:call.method]) {
       [self flurrySetDelete];
-  } else if([@"endTimedEvent" isEqualToString:call.method]) {
-      [self flurryEndTimedEvent:call.arguments];
-  } else if([@"endTimedEventWithParameters" isEqualToString:call.method]) {
-      [self flurryEndTimedEventWithParameters:call.arguments];
   } else if([@"getAgentVersion" isEqualToString:call.method]) {
       NSNumber* agentVersion = [NSNumber numberWithLong:[self flurryGetAgentVersion]];
       result(agentVersion);
@@ -280,14 +276,29 @@ bool hasSetUpDummyListener_messaging = false;
   } else if([@"logEventWithParameters" isEqualToString:call.method]) {
       NSNumber* logEvent = [NSNumber numberWithLong:[self flurryLogEventWithParameters:call.arguments]];
       result(logEvent);
-  } else if([@"logPayment" isEqualToString:call.method]) {
-      NSNumber* num = [NSNumber numberWithLong:[self flurryLogPayment:call.arguments]];
-      result(num);
   } else if([@"logTimedEvent" isEqualToString:call.method]) {
-    [self flurryLogTimedEvent:call.arguments];
+      NSNumber* logEvent = [NSNumber numberWithLong:[self flurryLogTimedEvent:call.arguments]];
+      result(logEvent);
   } else if([@"logTimedEventWithParameters" isEqualToString:call.method]) {
       NSNumber* logEvent = [NSNumber numberWithLong:[self flurryLogTimedEventWithParameters:call.arguments]];
       result(logEvent);
+  } else if([@"logTimedEventId" isEqualToString:call.method]) {
+      NSNumber* logEvent = [NSNumber numberWithLong:[self flurryLogTimedEventId:call.arguments]];
+      result(logEvent);
+  } else if([@"logTimedEventIdWithParameters" isEqualToString:call.method]) {
+      NSNumber* logEvent = [NSNumber numberWithLong:[self flurryLogTimedEventIdWithParameters:call.arguments]];
+      result(logEvent);
+  } else if([@"endTimedEvent" isEqualToString:call.method]) {
+      [self flurryEndTimedEvent:call.arguments];
+  } else if([@"endTimedEventWithParameters" isEqualToString:call.method]) {
+      [self flurryEndTimedEventWithParameters:call.arguments];
+  } else if([@"endTimedEventId" isEqualToString:call.method]) {
+      [self flurryEndTimedEventId:call.arguments];
+  } else if([@"endTimedEventIdWithParameters" isEqualToString:call.method]) {
+      [self flurryEndTimedEventIdWithParameters:call.arguments];
+  } else if([@"logPayment" isEqualToString:call.method]) {
+      NSNumber* num = [NSNumber numberWithLong:[self flurryLogPayment:call.arguments]];
+      result(num);
   } else if([@"onError" isEqualToString:call.method]) {
       [self flurryLogError:call.arguments];
   } else if([@"onErrorWithParameters" isEqualToString:call.method]) {
@@ -505,18 +516,6 @@ bool hasSetUpDummyListener_messaging = false;
     [FlurryCCPA setDelete];
 }
 
--(void) flurryEndTimedEvent:(NSDictionary*) event {
-    NSString* eventId = event[@"eventId"];
-    [Flurry endTimedEvent:eventId withParameters:nil];
-}
-
--(void) flurryEndTimedEventWithParameters:(NSDictionary*)event {
-    NSString* eventId = event[@"eventId"];
-    NSMutableDictionary* params = event[@"parameters"];
-
-    [Flurry endTimedEvent:eventId withParameters: params];
-}
-
 -(NSInteger) flurryGetAgentVersion {
     NSString* str = [Flurry getFlurryAgentVersion];
     NSArray *arrayOfComponents = [str componentsSeparatedByString:@"_"];
@@ -551,6 +550,56 @@ bool hasSetUpDummyListener_messaging = false;
     return [Flurry logEvent:eventId withParameters:params];
 }
 
+-(NSInteger) flurryLogTimedEvent:(NSDictionary*)event {
+    NSString* eventId = event[@"eventId"];
+    BOOL timed = event[@"timed"];
+    return [Flurry logEvent:eventId withParameters:nil timed:timed];
+}
+
+-(NSInteger) flurryLogTimedEventWithParameters:(NSDictionary*)event {
+    NSString* eventId = event[@"eventId"];
+    BOOL timed = event[@"timed"];
+    NSDictionary* params = event[@"parameters"];
+    return [Flurry logEvent:eventId withParameters:params timed:timed];
+}
+
+-(NSInteger) flurryLogTimedEventId:(NSDictionary*)event {
+    NSString* eventId = event[@"eventId"];
+    NSString* timedId = event[@"timedId"];
+    return [Flurry logEvent:eventId withEventId:timedId];
+}
+
+-(NSInteger) flurryLogTimedEventIdWithParameters:(NSDictionary*)event {
+    NSString* eventId = event[@"eventId"];
+    NSString* timedId = event[@"timedId"];
+    NSDictionary* params = event[@"parameters"];
+    return [Flurry logEvent:eventId withEventId:timedId withParameters:params];
+}
+
+-(void) flurryEndTimedEvent:(NSDictionary*) event {
+    NSString* eventId = event[@"eventId"];
+    [Flurry endTimedEvent:eventId withParameters:nil];
+}
+
+-(void) flurryEndTimedEventWithParameters:(NSDictionary*)event {
+    NSString* eventId = event[@"eventId"];
+    NSMutableDictionary* params = event[@"parameters"];
+    [Flurry endTimedEvent:eventId withParameters: params];
+}
+
+-(void) flurryEndTimedEventId:(NSDictionary*) event {
+    NSString* eventId = event[@"eventId"];
+    NSString* timedId = event[@"timedId"];
+    [Flurry endTimedEvent:eventId withEventId:timedId withParameters:nil];
+}
+
+-(void) flurryEndTimedEventIdWithParameters:(NSDictionary*)event {
+    NSString* eventId = event[@"eventId"];
+    NSString* timedId = event[@"timedId"];
+    NSMutableDictionary* params = event[@"parameters"];
+    [Flurry endTimedEvent:eventId withEventId:timedId withParameters: params];
+}
+
 -(NSInteger) flurryLogPayment:(NSDictionary*)payment {
     NSString* productName = payment[@"productName"];
     NSString* productId = payment[@"productId"];
@@ -567,20 +616,6 @@ bool hasSetUpDummyListener_messaging = false;
     }];
 
     return transactionStatus;
-}
-
--(void) flurryLogTimedEvent:(NSDictionary*)event {
-    NSString* eventId = event[@"eventId"];
-    BOOL timed = event[@"timed"];
-    [Flurry logEvent:eventId withParameters:nil timed:timed];
-}
-
--(NSInteger) flurryLogTimedEventWithParameters:(NSDictionary*)event {
-    NSString* eventId = event[@"eventId"];
-    BOOL timed = event[@"timed"];
-    NSDictionary* params = event[@"parameters"];
-    
-    return [Flurry logEvent:eventId withParameters:params timed:timed];
 }
 
 -(void) flurryLogError:(NSDictionary*)errorDict {

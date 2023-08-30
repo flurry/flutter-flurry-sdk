@@ -55,7 +55,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
     private static final String TAG = "FlurryFlutterPlugin";
 
     private static final String ORIGIN_NAME = "flutter-flurry-sdk";
-    private static final String ORIGIN_VERSION = "3.2.0";
+    private static final String ORIGIN_VERSION = "3.3.0";
 
     private Context context;
 
@@ -385,6 +385,19 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 status = logTimedEventWithParameters(eventId, parameters, timed);
                 result.success(status);
                 break;
+            case "logTimedEventId":
+                eventId = call.argument("eventId");
+                String timedId = call.<String>argument("timedId");
+                status = logTimedEventId(eventId, timedId);
+                result.success(status);
+                break;
+            case "logTimedEventIdWithParameters":
+                eventId = call.argument("eventId");
+                parameters = call.argument("parameters");
+                timedId = call.<String>argument("timedId");
+                status = logTimedEventIdWithParameters(eventId, parameters, timedId);
+                result.success(status);
+                break;
             case "endTimedEvent":
                 eventId = call.argument("eventId");
                 endTimedEvent(eventId);
@@ -393,6 +406,17 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
                 eventId = call.argument("eventId");
                 parameters = call.argument("parameters");
                 endTimedEventWithParameters(eventId, parameters);
+                break;
+            case "endTimedEventId":
+                eventId = call.argument("eventId");
+                timedId = call.<String>argument("timedId");
+                endTimedEventId(eventId, timedId);
+                break;
+            case "endTimedEventIdWithParameters":
+                eventId = call.argument("eventId");
+                parameters = call.argument("parameters");
+                timedId = call.<String>argument("timedId");
+                endTimedEventIdWithParameters(eventId, parameters, timedId);
                 break;
             case "logStandardEvent":
                 int standardId = call.<Integer>argument("id");
@@ -692,12 +716,30 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
         return (status != null) ? status.ordinal() : 0;
     }
 
+    public int logTimedEventId(String eventId, String timedId) {
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, timedId);
+        return (status != null) ? status.ordinal() : 0;
+    }
+
+    public int logTimedEventIdWithParameters(String eventId, Map<String, String> parameters, String timedId) {
+        FlurryEventRecordStatus status = FlurryAgent.logEvent(eventId, parameters, timedId);
+        return (status != null) ? status.ordinal() : 0;
+    }
+
     public void endTimedEvent(String eventId) {
         FlurryAgent.endTimedEvent(eventId);
     }
 
     public void endTimedEventWithParameters(String eventId, Map<String, String> parameters) {
         FlurryAgent.endTimedEvent(eventId, parameters);
+    }
+
+    public void endTimedEventId(String eventId, String timedId) {
+        FlurryAgent.endTimedEvent(eventId, timedId);
+    }
+
+    public void endTimedEventIdWithParameters(String eventId, Map<String, String> parameters, String timedId) {
+        FlurryAgent.endTimedEvent(eventId, parameters, timedId);
     }
 
     public int logStandardEvent(int standardId, Map<Integer, String> flurryParam, Map<String, String> userParam) {
@@ -923,7 +965,7 @@ public class FlurryFlutterPlugin implements FlutterPlugin, MethodCallHandler, Ac
      */
     static class FlutterFlurryConfigListener implements FlurryConfigListener {
 
-        enum EventType {
+        public enum EventType {
             FetchSuccess("FetchSuccess"),
             FetchNoChange("FetchNoChange"),
             FetchError("FetchError"),

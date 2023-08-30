@@ -405,10 +405,14 @@ See [Android](https://flurry.github.io/flurry-android-sdk/analytics/index.html)-
   Future<EventRecordStatus> Flurry.logEvent(String eventId);
   Future<EventRecordStatus> Flurry.logEventWithParameters(String eventId, Map<String, String> parameters);
   Future<EventRecordStatus> Flurry.logTimedEvent(String eventId, bool timed);
-  Future<EventRecordStatus> Flurry.logTimedEventWithParamters(String eventId, Map<String, String> parameters, bool timed);
+  Future<EventRecordStatus> Flurry.logTimedEventWithParameters(String eventId, Map<String, String> parameters, bool timed);
+  Future<EventRecordStatus> Flurry.logTimedEventId(String eventId, String timedId);
+  Future<EventRecordStatus> Flurry.logTimedEventIdWithParameters(String eventId, Map<String, String> parameters, String timedId);
 
   void Flurry.endTimedEvent(String eventId);
   void Flurry.endTimedEventWithParameters(String eventId, Map<String, String> parameters);
+  void Flurry.endTimedEventId(String eventId, String timedId);
+  void Flurry.endTimedEventIdWithParameters(String eventId, Map<String, String> parameters, String timedId);
 
   Future<EventRecordStatus> Flurry.logStandardEvent(StandardEventId id, Param param);
 

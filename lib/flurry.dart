@@ -254,20 +254,6 @@ class Flurry {
     return EventRecordStatus.eventRecorded;
   }
 
-  /// Records a custom timed event named [eventId]
-  ///
-  /// Logs [eventId] as a non timed event or a timed event based on boolean
-  /// [timed]. Returns the event recording status of the logged event.
-  static Future<EventRecordStatus> logTimedEvent(
-      String eventId, bool timed) async {
-    if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent!.logTimedEvent(eventId, timed);
-      return EventRecordStatus.values[eventRecordStatus];
-    }
-
-    return EventRecordStatus.eventRecorded;
-  }
-
   /// Records an event named [eventId] with parameters.
   ///
   /// Logs [eventId] with maximum of 10 [parameters] which helps in specifying
@@ -278,6 +264,20 @@ class Flurry {
     if (flurryAgent != null) {
       int eventRecordStatus =
           await flurryAgent!.logEventWithParameters(eventId, parameters);
+      return EventRecordStatus.values[eventRecordStatus];
+    }
+
+    return EventRecordStatus.eventRecorded;
+  }
+
+  /// Records a custom timed event named [eventId]
+  ///
+  /// Logs [eventId] as a non timed event or a timed event based on boolean
+  /// [timed]. Returns the event recording status of the logged event.
+  static Future<EventRecordStatus> logTimedEvent(
+      String eventId, bool timed) async {
+    if (flurryAgent != null) {
+      int eventRecordStatus = await flurryAgent!.logTimedEvent(eventId, timed);
       return EventRecordStatus.values[eventRecordStatus];
     }
 
@@ -300,6 +300,58 @@ class Flurry {
     return EventRecordStatus.eventRecorded;
   }
 
+  /// Records a custom timed event named [eventId]
+  ///
+  /// Logs [eventId] as a timed event with the second key [timedId].
+  /// Returns the event recording status of the logged event.
+  ///
+  /// Example for timed event logging with the 2nd key:
+  ///   0    1    2    3    4    5    6    sec.
+  ///   ID1  ID2       ID3
+  ///        -    -    -    ID2: 3 sec.
+  ///                  -    -    ID3: 2 sec.
+  ///   -    -    -    -    -    -    ID1: 6 sec.
+  ///
+  ///  Flurry.logTimedEventId('TimedEventName', 'InstanceId1');
+  ///  // sleep 1 sec.
+  ///  Flurry.logTimedEventId('TimedEventName', 'InstanceId2');
+  ///  // sleep 2 sec.
+  ///  Flurry.logTimedEventId('TimedEventName', 'InstanceId3');
+  ///
+  ///  // sleep 1 sec.
+  ///  Flurry.endTimedEventId('TimedEventName', 'InstanceId2');  // ID2 duration: 3 sec.
+  ///  // sleep 1 sec.
+  ///  Flurry.endTimedEventId('TimedEventName', 'InstanceId3');  // ID3 duration: 2 sec.
+  ///  // sleep 1 sec.
+  ///  Flurry.endTimedEventId('TimedEventName', 'InstanceId1');  // ID1 duration: 6 sec.
+  ///
+  static Future<EventRecordStatus> logTimedEventId(
+      String eventId, String timedId) async {
+    if (flurryAgent != null) {
+      int eventRecordStatus =
+          await flurryAgent!.logTimedEventId(eventId, timedId);
+      return EventRecordStatus.values[eventRecordStatus];
+    }
+
+    return EventRecordStatus.eventRecorded;
+  }
+
+  /// Records a timed event named [eventId] with parameters.
+  ///
+  /// Logs [eventId] as a timed event with the second key [timedId].
+  /// Use maximum of 10 [parameters] to specify the characters of the
+  /// event. Returns the event recording status of the logged event.
+  static Future<EventRecordStatus> logTimedEventIdWithParameters(
+      String eventId, Map<String, String> parameters, String timedId) async {
+    if (flurryAgent != null) {
+      int eventRecordStatus = await flurryAgent!
+          .logTimedEventIdWithParameters(eventId, parameters, timedId);
+      return EventRecordStatus.values[eventRecordStatus];
+    }
+
+    return EventRecordStatus.eventRecorded;
+  }
+
   /// Ends an existing timed event named [eventId].
   ///
   /// Ignores the action if event named [eventId] is already terminated.
@@ -316,6 +368,62 @@ class Flurry {
   static void endTimedEventWithParameters(
       String eventId, Map<String, String> parameters) {
     flurryAgent?.endTimedEventWithParameters(eventId, parameters);
+  }
+
+  /// Ends an existing timed event named [eventId].
+  ///
+  /// Ends the timed event [eventId] with the second key [timedId].
+  /// Ignores the action if event named [eventId] is already terminated.
+  static void endTimedEventId(String eventId, String timedId) {
+    flurryAgent?.endTimedEventId(eventId, timedId);
+  }
+
+  /// Ends a timed event and updated parameters.
+  ///
+  /// Ends the timed event [eventId] with the second key [timedId]
+  /// if the event was not terminated already. Updates the
+  /// existing parameters to the new [parameters] Maximum of 10 unique
+  /// parameters total can be passed for an event, including those passed when
+  /// the event was initiated.
+  static void endTimedEventIdWithParameters(
+      String eventId, Map<String, String> parameters, String timedId) {
+    flurryAgent?.endTimedEventIdWithParameters(eventId, parameters, timedId);
+  }
+
+  /// Records a Flurry standard event.
+  ///
+  /// Records a standard parameterized event specified by event type named [id]
+  /// and maximum of 10 parameters passed as [param]. Returns the event recording
+  /// status of the logged standard event.
+  static Future<EventRecordStatus> logStandardEvent(
+      FlurryEvent id, Param param) async {
+    if (flurryAgent != null) {
+      int eventRecordStatus = await flurryAgent!.logStandardEvent(id, param);
+      return EventRecordStatus.values[eventRecordStatus];
+    }
+    return EventRecordStatus.eventFailed;
+  }
+
+  /// Logs a payment.
+  ///
+  /// Logs a transaction event with maximum of 10 [parameters] to specify the
+  /// characteristics of the payment. Returns the event recording status of the
+  /// logged event.
+  static Future<EventRecordStatus> logPayment(
+      String productName,
+      String productId,
+      int quantity,
+      double price,
+      String currency,
+      String transactionId,
+      Map<String, String> parameters) async {
+    if (flurryAgent != null) {
+      int eventRecordStatus = await flurryAgent!.logPayment(productName,
+          productId, quantity, price, currency, transactionId, parameters);
+      return EventRecordStatus.values[eventRecordStatus];
+    }
+
+    return EventRecordStatus.eventRecorded;
   }
 
   /// Records an app exception.
@@ -346,42 +454,6 @@ class Flurry {
   /// at every application launch.
   static void logBreadcrumb(String crashBreadcrumb) {
     flurryAgent?.logBreadcrumb(crashBreadcrumb);
-  }
-
-  /// Logs a payment.
-  ///
-  /// Logs a transaction event with maximum of 10 [parameters] to specify the
-  /// characteristics of the payment. Returns the event recording status of the
-  /// logged event.
-  static Future<EventRecordStatus> logPayment(
-      String productName,
-      String productId,
-      int quantity,
-      double price,
-      String currency,
-      String transactionId,
-      Map<String, String> parameters) async {
-    if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent!.logPayment(productName,
-          productId, quantity, price, currency, transactionId, parameters);
-      return EventRecordStatus.values[eventRecordStatus];
-    }
-
-    return EventRecordStatus.eventRecorded;
-  }
-
-  /// Records a Flurry standard event.
-  ///
-  /// Records a standard parameterized event specified by event type named [id]
-  /// and maximum of 10 parameters passed as [param]. Returns the event recording
-  /// status of the logged standard event.
-  static Future<EventRecordStatus> logStandardEvent(
-      FlurryEvent id, Param param) async {
-    if (flurryAgent != null) {
-      int eventRecordStatus = await flurryAgent!.logStandardEvent(id, param);
-      return EventRecordStatus.values[eventRecordStatus];
-    }
-    return EventRecordStatus.eventFailed;
   }
 
   /// Enables implicit recording of In-App transactions.
